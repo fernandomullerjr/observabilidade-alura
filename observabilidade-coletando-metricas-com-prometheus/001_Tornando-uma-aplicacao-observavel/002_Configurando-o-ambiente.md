@@ -121,3 +121,7 @@ Java version: 11.0.16, vendor: Debian, runtime: /usr/lib/jvm/java-11-openjdk-amd
 Default locale: en_US, platform encoding: UTF-8
 OS name: "linux", version: "4.19.0-17-amd64", arch: "amd64", family: "unix"
 fernando@debian10x64:~/cursos$
+
+
+
+- Instalando o "Extension Pack for Java" no VSCODE
