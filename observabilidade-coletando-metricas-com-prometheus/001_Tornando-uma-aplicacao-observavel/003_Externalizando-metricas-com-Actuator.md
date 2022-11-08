@@ -245,3 +245,51 @@ templated	false
 metrics-requiredMetricName	
 href	"http://192.168.0.113:8080/actuator/metrics/{requiredMetricName}"
 templated	true
+
+
+
+[06:54] Voltando, a aplicação subiu, foi "startada" e, por fim, eu tenho “topicos”, tenho “http://localhost:8080/topicos/” e um ID qualquer. Agora tenho “http://localhst:8080/actuator”. Aqui está o Actuator expondo para nós health. Aqui tenho health mais um path específico, mas ele é herdado desse health aqui que foi configurado no application properties.
+
+
+
+
+
+
+
+
+- Acessando o Health:
+http://192.168.0.113:8080/actuator/health
+
+	
+status	"UP"
+components	
+db	
+status	"UP"
+details	
+database	"MySQL"
+validationQuery	"isValid()"
+diskSpace	
+status	"UP"
+details	
+total	40454598656
+free	2514546688
+threshold	10485760
+exists	true
+ping	
+status	"UP"
+redis	
+status	"UP"
+details	
+version	"7.0.5"
+
+
+
+[07:38] Está aqui, eu tenho esse endpoint health, tenho o endpoint health-path que veio herdado do health, tenho o info, e tenho o metrics. Tenho o metrics com uma métrica específica, o metric name, e tenho o metrics puro.
+
+[07:59] Então, o que vou fazer aqui? Vou abrir o health, vamos dar uma olhada no health. Está aqui, esse é o health que pode ser usado como health check, então status: UP. Ele olha, inclusive, a comunicação que a aplicação depende, no caso, o My SQL, está conectado.
+
+[08:16] Olha o espaço em disco. Tem o redis também UP. Então, esse health é importantíssimo para a questão de health check e para você entender, em um momento imediato, se alguma dependência está com problema.
+
+[08:35] Se ele não conectar com o Redis, vai bater aqui; se não conectar com o MySQL, vai bater aqui também, porque isso não depende da aplicação conectar no banco para ser exibido.
+
+[08:48] Já demos uma olhada no health, vamos dar uma olhada no info, o que eu encontro dentro do info. O app, qual é o nome, a descrição, a versão, como ele está codificado e a versão do Java. Isso é bem legal.
