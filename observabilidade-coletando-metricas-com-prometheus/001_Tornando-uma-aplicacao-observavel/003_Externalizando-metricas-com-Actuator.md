@@ -293,3 +293,127 @@ version	"7.0.5"
 [08:35] Se ele não conectar com o Redis, vai bater aqui; se não conectar com o MySQL, vai bater aqui também, porque isso não depende da aplicação conectar no banco para ser exibido.
 
 [08:48] Já demos uma olhada no health, vamos dar uma olhada no info, o que eu encontro dentro do info. O app, qual é o nome, a descrição, a versão, como ele está codificado e a versão do Java. Isso é bem legal.
+
+
+
+
+- Acessando o Info:
+http://192.168.0.113:8080/actuator/info
+
+	
+app	
+name	"forum"
+description	"Demo project for Spring Boot"
+version	"0.0.1-SNAPSHOT"
+encoding	"UTF-8"
+java	
+version	"11.0.16"
+
+
+
+
+
+- Acessando as métricas em Metrics:
+http://192.168.0.113:8080/actuator/metrics
+
+	
+names	
+0	"hikaricp.connections"
+1	"hikaricp.connections.acquire"
+2	"hikaricp.connections.active"
+3	"hikaricp.connections.creation"
+4	"hikaricp.connections.idle"
+5	"hikaricp.connections.max"
+6	"hikaricp.connections.min"
+7	"hikaricp.connections.pending"
+8	"hikaricp.connections.timeout"
+9	"hikaricp.connections.usage"
+10	"http.server.requests"
+11	"jdbc.connections.active"
+12	"jdbc.connections.idle"
+13	"jdbc.connections.max"
+14	"jdbc.connections.min"
+15	"jvm.buffer.count"
+16	"jvm.buffer.memory.used"
+17	"jvm.buffer.total.capacity"
+18	"jvm.classes.loaded"
+19	"jvm.classes.unloaded"
+20	"jvm.gc.live.data.size"
+21	"jvm.gc.max.data.size"
+22	"jvm.gc.memory.allocated"
+23	"jvm.gc.memory.promoted"
+24	"jvm.gc.pause"
+25	"jvm.memory.committed"
+26	"jvm.memory.max"
+27	"jvm.memory.used"
+28	"jvm.threads.daemon"
+29	"jvm.threads.live"
+30	"jvm.threads.peak"
+31	"jvm.threads.states"
+32	"logback.events"
+33	"process.cpu.usage"
+34	"process.files.max"
+35	"process.files.open"
+36	"process.start.time"
+37	"process.uptime"
+38	"system.cpu.count"
+39	"system.cpu.usage"
+40	"system.load.average.1m"
+41	"tomcat.sessions.active.current"
+42	"tomcat.sessions.active.max"
+43	"tomcat.sessions.alive.max"
+44	"tomcat.sessions.created"
+45	"tomcat.sessions.expired"
+46	"tomcat.sessions.rejected"
+
+
+
+
+[09:06] O que nós conseguimos, na parte mais importante, em metrics, o que conseguimos ver? Muita coisa. Aqui tenho a exposição de todas as métricas da JVM. Se você verificar, você tem o uso de CPU, você tem o log no logback, você tem a questão de threads, de memória, você consegue encontrar o garbage collector.
+
+[09:39] Você consegue pegar o pool de conexões da JDBC com o banco, conexões pendentes, com timeout, utilizadas, tempo de criação, enfim, diversas métricas.
+
+[09:55] Essas métricas, se eu pegar o nome desse, eu consigo chegar nesse endpoint com o nome de uma métrica naquela métrica específica. Por exemplo, vou pegar o hikaricp.connections, vou chamar esse endpoint, que é o mesmo. Vou colocar o “http://localhost:8080/actuator/metrics/hikaricp.connections” e está aqui, o valor é 10.
+
+[10:24] Então, eu consigo chegar nessas métricas. Nós conseguimos colocar as métricas da JVM aqui, elas estão expostas, porém, não estão no formato esperado. Nós não conseguimos identificar e usar essas métricas através do Prometheus, que é o nosso objetivo.
+
+[10:47] Então, na próxima aula, vamos configurar o Micrometer e ele vai fazer esse meio de campo, vai tornar essas métricas legíveis para o Prometheus. Te vejo na próxima aula.
+
+
+
+
+
+http://localhost:8080/actuator/metrics/hikaricp.connections
+http://localhost:8080/actuator/metrics/hikaricp.connections
+
+
+http://192.168.0.113:8080/actuator/metrics/hikaricp.connections
+
+	
+name	"hikaricp.connections"
+description	"Total connections"
+baseUnit	null
+measurements	
+0	
+statistic	"VALUE"
+value	10
+availableTags	
+0	
+tag	"pool"
+values	
+0	"HikariPool-1"
+
+
+
+
+
+http://192.168.0.113:8080/actuator/metrics/system.cpu.usage
+	
+name	"system.cpu.usage"
+description	"The \"recent cpu usage\" for the whole system"
+baseUnit	null
+measurements	
+0	
+statistic	"VALUE"
+value	0
+availableTags	[]

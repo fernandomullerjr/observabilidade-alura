@@ -31,3 +31,9 @@ http://192.168.0.113:8080/actuator
 
 - Acessando o Health:
 http://192.168.0.113:8080/actuator/health
+
+- Acessando o Info:
+http://192.168.0.113:8080/actuator/info
+
+- Acessando as métricas em Metrics:
+http://192.168.0.113:8080/actuator/metrics
