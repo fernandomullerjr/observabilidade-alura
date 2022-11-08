@@ -89,3 +89,159 @@ git status
 [10:24] Então, eu consigo chegar nessas métricas. Nós conseguimos colocar as métricas da JVM aqui, elas estão expostas, porém, não estão no formato esperado. Nós não conseguimos identificar e usar essas métricas através do Prometheus, que é o nosso objetivo.
 
 [10:47] Então, na próxima aula, vamos configurar o Micrometer e ele vai fazer esse meio de campo, vai tornar essas métricas legíveis para o Prometheus. Te vejo na próxima aula.
+
+
+
+
+
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# Aula 03 Externalizando métricas com Actuator
+
+
+- Ativando o Actuator num projeto baseado em Maven
+<https://docs.spring.io/spring-boot/docs/2.1.x/reference/html/production-ready-enabling.html>
+
+To add the actuator to a Maven based project, add the following ‘Starter’ dependency:
+
+~~~~java
+<dependencies>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-actuator</artifactId>
+	</dependency>
+</dependencies>
+~~~~
+
+
+- Editar o arquivo pom.xml
+/home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/pom.xml
+colar o conteúdo do xml acima
+
+
+
+
+- Editar o arquivo "application-prod.properties"
+/home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/src/main/resources/application-prod.properties
+
+[02:32] Tem a porta em que a aplicação sobre, tem a configuração do Redis, tem a configuração do MySQL, tem o JPA para conexão e tem o token jwt, porque essa aplicação usa um token.
+
+[02:47] Para algumas ações de excluir um tópico, criar um tópico, é necessário ter um token que é gerado através de uma autenticação. Estamos falando de uma API Rest.
+
+
+[03:02] O que vou fazer agora? Deixa eu pegar uma cola para não ter que digitar tudo isso. Em qualquer espaço que você encontrar, pode colocar actuator. A primeira linha que eu inseri aqui foi o management.endpoint.health.show-details.
+
+
+O que será adicionado:
+
+~~~~conf
+# actuator
+management.endpoint.health.show-details=always
+management.endpoints.web.exposure.include=health,info,metrics
+~~~~
+
+
+
+- ReBuildando a aplicação e validando se está tudo ok:
+cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app
+mvn clean package
+
+deu erro
+
+~~~~bash
+fernando@debian10x64:~/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app$ cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app
+fernando@debian10x64:~/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app$ mvn clean package
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by com.google.inject.internal.cglib.core.$ReflectUtils$1 (file:/usr/share/maven/lib/guice.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain)
+WARNING: Please consider reporting this to the maintainers of com.google.inject.internal.cglib.core.$ReflectUtils$1
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+[INFO] Scanning for projects...
+[ERROR] [ERROR] Some problems were encountered while processing the POMs:
+[ERROR] Malformed POM /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/pom.xml: Unrecognised tag: 'dependencies' (position: START_TAG seen ...</dependency>\n\n\t\t<dependencies>... @94:17)  @ /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/pom.xml, line 94, column 17
+ @
+[ERROR] The build could not read 1 project -> [Help 1]
+[ERROR]
+[ERROR]   The project br.com.alura:forum:0.0.1-SNAPSHOT (/home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/pom.xml) has 1 error
+[ERROR]     Malformed POM /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/pom.xml: Unrecognised tag: 'dependencies' (position: START_TAG seen ...</dependency>\n\n\t\t<dependencies>... @94:17)  @ /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/pom.xml, line 94, column 17 -> [Help 2]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/ProjectBuildingException
+[ERROR] [Help 2] http://cwiki.apache.org/confluence/display/MAVEN/ModelParseException
+fernando@debian10x64:~/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app$
+fernando@debian10x64:~/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app$
+fernando@debian10x64:~/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app$
+
+~~~~
+
+
+
+
+- Ajustando o pom.xml
+
+- ReBuildando a aplicação e validando se está tudo ok:
+cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app
+mvn clean package
+
+buildou corretamente
+
+~~~~bash
+
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO]
+[INFO] --- maven-jar-plugin:3.2.0:jar (default-jar) @ forum ---
+[INFO] Building jar: /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/target/forum.jar
+[INFO]
+[INFO] --- spring-boot-maven-plugin:2.3.1.RELEASE:repackage (repackage) @ forum ---
+[INFO] Replacing main artifact with repackaged archive
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  40.761 s
+[INFO] Finished at: 2022-11-07T22:03:33-03:00
+[INFO] ------------------------------------------------------------------------
+fernando@debian10x64:~/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app$
+
+~~~~
+
+
+
+- Rodar a aplicação novamente:
+ sh start.sh
+
+
+
+
+
+- Agora é possível acessar o Actuator:
+http://192.168.0.113:8080/actuator
+
+	
+_links	
+self	
+href	"http://192.168.0.113:8080/actuator"
+templated	false
+health	
+href	"http://192.168.0.113:8080/actuator/health"
+templated	false
+health-path	
+href	"http://192.168.0.113:8080/actuator/health/{*path}"
+templated	true
+info	
+href	"http://192.168.0.113:8080/actuator/info"
+templated	false
+metrics	
+href	"http://192.168.0.113:8080/actuator/metrics"
+templated	false
+metrics-requiredMetricName	
+href	"http://192.168.0.113:8080/actuator/metrics/{requiredMetricName}"
+templated	true

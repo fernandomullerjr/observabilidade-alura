@@ -22,3 +22,9 @@ http://192.168.0.113:8080/topicos/1
 curl -v http://192.168.0.113:8080/topicos/1
 curl -v http://192.168.0.113:8080/topicos/2
 curl -v http://192.168.0.113:8080/topicos/3
+
+
+
+
+- Agora é possível acessar o Actuator:
+http://192.168.0.113:8080/actuator
