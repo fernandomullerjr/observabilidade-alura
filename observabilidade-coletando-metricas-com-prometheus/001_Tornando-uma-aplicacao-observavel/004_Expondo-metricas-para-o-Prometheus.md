@@ -76,3 +76,143 @@ git status
 [06:46] Pelo menos, as que são interessantes para a nossa aplicação e que vamos utilizar futuramente configurando dashboards e alertas em cima de valores específicos, de momentos específicos dessas métricas.
 
 [07:02] Essa aula se encerra aqui e, na aula que vem, vamos entender as métricas da JVM para que você saiba qual métrica vai ser utilizada para um tipo específico de observabilidade e monitoramento. Até a próxima.
+
+
+
+
+
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# 04 Expondo métricas para o Prometheus
+
+
+
+
+https://micrometer.io/docs
+
+https://micrometer.io/docs/installing
+
+
+
+
+The following example adds Prometheus in Maven:
+
+<dependency>
+  <groupId>io.micrometer</groupId>
+  <artifactId>micrometer-registry-prometheus</artifactId>
+  <version>${micrometer.version}</version>
+</dependency>
+
+
+
+- Editar o pom.xml e adicionar a dependencia:
+/home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/pom.xml
+
+<dependency>
+  <groupId>io.micrometer</groupId>
+  <artifactId>micrometer-registry-prometheus</artifactId>
+  <version>${micrometer.version}</version>
+</dependency>
+
+
+
+
+- Necessário adicionar o endpoint do Prometheus no arquivo "application-prod.properties":
+sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/src/main/resources/application-prod.properties
+
+DE:
+
+# actuator
+management.endpoint.health.show-details=always
+management.endpoints.web.exposure.include=health,info,metrics
+
+PARA:
+
+# actuator
+management.endpoint.health.show-details=always
+management.endpoints.web.exposure.include=health,info,metrics,prometheus
+
+
+
+
+
+
+- Necessário adicionar a Configuração do Prometheus no arquivo "application-prod.properties":
+sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/src/main/resources/application-prod.properties
+~~~~conf
+# prometheus
+management.metrics.enable.jvm=true
+management.metrics.export.prometheus.enabled=true
+management.metrics.distribution.sla.http.server.requests=50ms,100ms,200ms,300ms
+management.metrics.tags.application=app-forum-api
+~~~~
+
+
+
+
+- Buildando aplicação e validando se está tudo ok
+
+cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app
+mvn clean package
+
+
+- Buildou:
+
+~~~~bash
+
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO]
+[INFO] --- maven-jar-plugin:3.2.0:jar (default-jar) @ forum ---
+[INFO] Building jar: /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/target/forum.jar
+[INFO]
+[INFO] --- spring-boot-maven-plugin:2.3.1.RELEASE:repackage (repackage) @ forum ---
+[INFO] Replacing main artifact with repackaged archive
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  43.741 s
+[INFO] Finished at: 2022-11-08T22:06:23-03:00
+[INFO] ------------------------------------------------------------------------
+fernando@debian10x64:~/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app$
+
+~~~~
+
+
+
+
+
+
+
+
+
+- Acessando o endpoint do Actuator, agora consta o Prometheus:
+
+<http://192.168.0.113:8080/actuator>
+	
+_links	
+self	
+href	"http://192.168.0.113:8080/actuator"
+templated	false
+health-path	
+href	"http://192.168.0.113:8080/actuator/health/{*path}"
+templated	true
+health	
+href	"http://192.168.0.113:8080/actuator/health"
+templated	false
+info	
+href	"http://192.168.0.113:8080/actuator/info"
+templated	false
+prometheus	
+href	"http://192.168.0.113:8080/actuator/prometheus"
+templated	false
+metrics-requiredMetricName	
+href	"http://192.168.0.113:8080/actuator/metrics/{requiredMetricName}"
+templated	true
+metrics	
+href	"http://192.168.0.113:8080/actuator/metrics"
+templated	false

@@ -12,6 +12,7 @@ mvn clean package
 
 
 - Subindo aplicação:
+cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app
 sh start.sh
 
 
