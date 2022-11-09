@@ -216,3 +216,25 @@ templated	true
 metrics	
 href	"http://192.168.0.113:8080/actuator/metrics"
 templated	false
+
+
+
+
+- Clicando no Prometheus, acessando ele
+<http://192.168.0.113:8080/actuator/prometheus>
+
+ele agora traz as métricas no formato esperado
+
+jvm_memory_max_bytes{application="app-forum-api",area="nonheap",id="Compressed Class Space",} 1.073741824E9
+jvm_memory_max_bytes{application="app-forum-api",area="nonheap",id="CodeHeap 'profiled nmethods'",} 1.22908672E8
+jvm_memory_max_bytes{application="app-forum-api",area="heap",id="G1 Survivor Space",} -1.0
+jvm_memory_max_bytes{application="app-forum-api",area="heap",id="G1 Old Gen",} 1.34217728E8
+jvm_memory_max_bytes{application="app-forum-api",area="nonheap",id="Metaspace",} -1.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="GET",outcome="CLIENT_ERROR",status="403",uri="root",le="0.05",} 1.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="GET",outcome="CLIENT_ERROR",status="403",uri="root",le="0.1",} 1.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="GET",outcome="CLIENT_ERROR",status="403",uri="root",le="0.2",} 1.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="GET",outcome="CLIENT_ERROR",status="403",uri="root",le="0.3",} 1.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="GET",outcome="CLIENT_ERROR",status="403",uri="root",le="+Inf",} 1.0
+http_server_requests_seconds_count{application="app-forum-api",exception="None",method="GET",outcome="CLIENT_ERROR",status="403",uri="root",} 1.0
+
+Entre outras
