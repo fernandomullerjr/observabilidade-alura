@@ -18,11 +18,16 @@ import br.com.alura.forum.config.security.TokenService;
 import br.com.alura.forum.controller.dto.TokenDto;
 import br.com.alura.forum.controller.form.LoginForm;
 
+import io.micrometer.core.instrument.Counter;
+
 @RestController
 @RequestMapping("/auth")
 @Profile(value = {"prod", "test"})
 public class AutenticacaoController {
 	
+	Counter authUserSuccess;
+	Counter authUserErrors;
+
 	@Autowired
 	private AuthenticationManager authManager;
 	
