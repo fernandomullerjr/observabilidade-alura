@@ -286,9 +286,22 @@ public class AutenticacaoController {
 [02:44] O que é esse problema? Temos que importar uma biblioteca, temos que importar uma dependência para que isso funcione. Presta bem atenção aqui porque eu vou trabalhar com o Counter vindo do io.micrometer.core.instrument.
 
 
-
-
 - Adicionar o import do Counter
+
+/home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/src/main/java/br/com/alura/forum/controller/AutenticacaoController.java
+
 ~~~~java
 import io.micrometer.core.instrument.Counter;
 ~~~~
+
+
+
+
+
+
+
+# PENDENTE
+- Ver porque o arquivo [AutenticacaoController.java] da aula tem mais linhas e conteúdo do que o disponível nos materiais.
+/home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/src/main/java/br/com/alura/forum/controller/AutenticacaoController.java
+- Aberto post:
+<https://cursos.alura.com.br/forum/topico-reclamacao-aula-02-metricas-default-e-personalizadas-254485>
