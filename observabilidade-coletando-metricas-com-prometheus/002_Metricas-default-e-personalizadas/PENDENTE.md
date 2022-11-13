@@ -8,3 +8,6 @@ arquivo:
 - Aberto post:
 <https://cursos.alura.com.br/forum/topico-reclamacao-aula-02-metricas-default-e-personalizadas-254485>
 - Enviado no canal "duvidas-do-discord"
+
+- COMPARAR COM
+/home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/002_Metricas-default-e-personalizadas/007_Codigo-metrica-personalizada.md
