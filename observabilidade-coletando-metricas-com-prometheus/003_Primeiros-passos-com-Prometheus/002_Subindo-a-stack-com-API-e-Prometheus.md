@@ -765,3 +765,57 @@ Warning: Error fetching server time: Detected 284.9360001087189 seconds time dif
 
 Warning: Error fetching server time: Detected 286.87800002098083 seconds time difference between your browser and the server. Prometheus relies on accurate time and time drift might cause unexpected query results.
 
+
+
+date -s 11/15/2022
+
+date --set 11/15/2022
+
+
+date -s 12:16:15
+
+date -s 12:19:15
+
+
+
+
+
+
+date --set="yyyymmdd hh:mm"
+date --set="20221115 12:24"
+
+# ERRO
+- ERRO:
+
+Warning: Error fetching server time: Detected 286.87800002098083 seconds time difference between your browser and the server. Prometheus relies on accurate time and time drift might cause unexpected query results.
+
+
+# SOLUÇÃO
+<https://alexandrebbarbosa.wordpress.com/2017/01/05/linux-acerto-de-data-hora-ou-timezone-via-linha-de-comandos/>
+- RESUMIDO:
+rm /etc/localtime
+ln -s /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+date --set="20221115 12:24"
+
+- COMPLETO:
+Você pode criar o link dinâmico, vinculando o arquivo do timezone que fica em usr/share/zoneinfo/{Continente}/{Cidade}, ou seja para São Paulo usr/share/zoneinfo/America/Sao_Paulo.
+
+Algumas vezes você precisa localizar o arquivo do timezone correto e pode listar com as iniciais:
+
+# ls /usr/share/zoneinfo/America/ | grep Sao
+
+Então poderá criar o link dinâmico para o nome correto. Primeiro remova o arquivo localtime:
+
+# rm /etc/localtime
+
+Segundo crie o link dinâmico
+
+# ln -s /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+
+Você deve conferir para certificar-se de que o timezone esteja correto com o comando date:
+
+# date
+
+Agora Você ainda poderia em algumas distribuições utilizar o comando:
+
+# dpkg-reconfigure tzdata
