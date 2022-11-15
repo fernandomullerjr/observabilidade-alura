@@ -11,3 +11,10 @@ arquivo:
 
 - COMPARAR COM
 /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/002_Metricas-default-e-personalizadas/007_Codigo-metrica-personalizada.md
+
+
+
+# Dia 14/11/2022
+
+- Ajustado, fazendo diff
+/home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app/src/main/java/br/com/alura/forum/controller/AutenticacaoController.java
