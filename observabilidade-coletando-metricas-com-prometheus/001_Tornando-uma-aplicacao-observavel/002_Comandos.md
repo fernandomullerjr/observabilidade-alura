@@ -43,7 +43,13 @@ http://192.168.0.113:8080/actuator/metrics
 
 
 
-
+- É necessário adicionar ao Docker-compose da aula:
+ sre-alura/observabilidade-coletando-metricas-com-prometheus/003_Primeiros-passos-com-Prometheus/002_Subindo-a-stack-com-API-e-Prometheus.md
+- SOLUÇÃO:
+<https://github.com/prometheus/prometheus/issues/5976>
 user: "1000:1000"
 
+
+
+- Conectando no Container do Prometheus:
 docker container exec -ti prometheus-forum-api sh

@@ -758,3 +758,10 @@ http://192.168.0.113:9090/
 # PENDENTE:
 - Tratar erro na página do Prom
 Warning: Error fetching server time: Detected 284.9360001087189 seconds time difference between your browser and the server. Prometheus relies on accurate time and time drift might cause unexpected query results.
+
+
+
+
+
+Warning: Error fetching server time: Detected 286.87800002098083 seconds time difference between your browser and the server. Prometheus relies on accurate time and time drift might cause unexpected query results.
+
