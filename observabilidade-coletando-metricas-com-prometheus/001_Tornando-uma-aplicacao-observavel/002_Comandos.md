@@ -38,3 +38,12 @@ http://192.168.0.113:8080/actuator/info
 
 - Acessando as métricas em Metrics:
 http://192.168.0.113:8080/actuator/metrics
+
+
+
+
+
+
+user: "1000:1000"
+
+docker container exec -ti prometheus-forum-api sh

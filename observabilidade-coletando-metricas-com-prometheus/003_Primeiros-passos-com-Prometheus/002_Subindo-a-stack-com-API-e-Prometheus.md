@@ -606,3 +606,155 @@ fernando@debian10x64:~$
 fernando@debian10x64:~$
 fernando@debian10x64:~$
 ~~~~
+
+
+
+
+
+- Efetuando curl para o ip do host, no path tópicos2:
+
+<http://192.168.0.113/topicos/2>
+curl http://192.168.0.113/topicos/2
+
+~~~~bash
+fernando@debian10x64:~$ curl http://192.168.0.113/topicos/2
+{"id":2,"titulo":"Duvida 2","mensagem":"Projeto nao compila","dataCriacao":"2019-05-05T19:00:00","nomeAutor":"Aluno","status":"NAO_RESPONDIDO","respostas":[]}fernando@debian10x64:~$
+fernando@debian10x64:~$
+~~~~
+
+
+
+
+- Efetuando curl no path do Prometheus, com as métricas:
+http://192.168.0.113/metrics
+
+
+
+- Efetuando curl no path do Health:
+http://192.168.0.113/health
+
+
+
+- Efetuando curl no path do info:
+http://192.168.0.113/info
+
+
+
+
+- Página do Prometheus não abre:
+http://192.168.0.113:9090/
+
+
+- Verificado que o Container do Prometheus tá com status "Restarting (2) 52 seconds ago":
+
+~~~~bash
+fernando@debian10x64:~$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS                          PORTS                               NAMES
+83e10d4ed708   prom/prometheus:latest   "/bin/prometheus --c…"   11 minutes ago   Restarting (2) 52 seconds ago                                       prometheus-forum-api
+ee9f972a9709   client-forum-api         "/scripts/client.sh"     11 minutes ago   Up 11 minutes                                                       client-forum-api
+64fdc02e7306   nginx                    "/docker-entrypoint.…"   11 minutes ago   Up 11 minutes                   0.0.0.0:80->80/tcp, :::80->80/tcp   proxy-forum-api
+2aa62dd5f35b   app-forum-api            "java -Xms128M -Xmx1…"   11 minutes ago   Up 11 minutes (unhealthy)                                           app-forum-api
+05941ffc7974   mysql:5.7                "docker-entrypoint.s…"   11 minutes ago   Up 11 minutes                                                       mysql-forum-api
+2c025f59b117   redis                    "docker-entrypoint.s…"   11 minutes ago   Up 11 minutes                                                       redis-forum-api
+fernando@debian10x64:~$
+~~~~
+
+
+
+- Erros nos logs do container:
+
+~~~~bash
+ts=2022-11-15T02:53:32.251Z caller=main.go:564 level=info vm_limits="(soft=unlimited, hard=unlimited)"
+ts=2022-11-15T02:53:32.251Z caller=query_logger.go:91 level=error component=activeQueryTracker msg="Error opening query log file" file=/prometheus/queries.active err="open /prometheus/queries.active: permission denied"
+panic: Unable to create mmap-ed active query log
+
+goroutine 1 [running]:
+github.com/prometheus/prometheus/promql.NewActiveQueryTracker({0x7ffe26e49ef7, 0xb}, 0x14, {0x3b92b80, 0xc0009356d0})
+        /app/promql/query_logger.go:121 +0x3cd
+main.main()
+        /app/cmd/prometheus/main.go:618 +0x6973
+fernando@debian10x64:~$
+~~~~
+
+
+
+- ERRO:
+Error opening query log file file=/prometheus/queries.active err=open /prometheus/queries.active: permission denied
+
+
+
+
+- SOLUÇÃO:
+<https://github.com/prometheus/prometheus/issues/5976>
+user: "1000:1000"
+
+In order to fix the issue, you need to set UID/GID in the container:
+
+> echo $UID
+1000
+
+Define in docker-compose:
+
+~~~~yaml
+# docker-compose.yml
+
+ services:
+  prometheus:
+    image: prom/prometheus
+    user: "1000:1000"
+~~~~
+
+
+Or in Dockerfile:
+
+~~~~Dockerfile
+# Dockerfile
+
+USER 1000:1000
+~~~~
+
+
+
+
+- Subindo stack
+cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/
+docker-compose up -d
+
+
+~~~~bash
+fernando@debian10x64:~$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS                      PORTS                                       NAMES
+07aae7905cd9   prom/prometheus:latest   "/bin/prometheus --c…"   5 seconds ago    Up 4 seconds                0.0.0.0:9090->9090/tcp, :::9090->9090/tcp   prometheus-forum-api
+ee9f972a9709   client-forum-api         "/scripts/client.sh"     18 minutes ago   Up 18 minutes                                                           client-forum-api
+64fdc02e7306   nginx                    "/docker-entrypoint.…"   18 minutes ago   Up 18 minutes               0.0.0.0:80->80/tcp, :::80->80/tcp           proxy-forum-api
+2aa62dd5f35b   app-forum-api            "java -Xms128M -Xmx1…"   18 minutes ago   Up 18 minutes (unhealthy)                                               app-forum-api
+05941ffc7974   mysql:5.7                "docker-entrypoint.s…"   18 minutes ago   Up 18 minutes                                                           mysql-forum-api
+2c025f59b117   redis                    "docker-entrypoint.s…"   18 minutes ago   Up 18 minutes                                                           redis-forum-api
+fernando@debian10x64:~$
+~~~~
+
+docker container exec -ti prometheus-forum-api sh
+
+fernando@debian10x64:~$ docker container exec -ti prometheus-forum-api sh
+/prometheus $
+/prometheus $
+/prometheus $ id
+uid=1000 gid=1000
+/prometheus $
+
+
+
+
+
+
+
+
+
+
+- Página do Prometheus:
+http://192.168.0.113:9090/
+
+
+# PENDENTE:
+- Tratar erro na página do Prom
+Warning: Error fetching server time: Detected 284.9360001087189 seconds time difference between your browser and the server. Prometheus relies on accurate time and time drift might cause unexpected query results.
