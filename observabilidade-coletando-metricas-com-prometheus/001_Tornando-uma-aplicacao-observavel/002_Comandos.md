@@ -57,3 +57,21 @@ user: "1000:1000"
 
 - Conectando no Container do Prometheus:
 docker container exec -ti prometheus-forum-api sh
+
+
+
+
+- O Linux consegue converter o valor do timestamp em Data:
+
+~~~~bash
+fernando@debian10x64:~$ date -d @1668824257.369
+Fri 18 Nov 2022 11:17:37 PM -03
+fernando@debian10x64:~$
+~~~~
+
+
+
+
+- iterando array
+array=( @1668824257.369 @1668824262.368 @1668824267.369 @1668824272.369 )
+for i in "${array[@]}" ; do date -d $i ; done
