@@ -107,3 +107,114 @@ git status
 # ##############################################################################################################################################################
 # ##############################################################################################################################################################
 # 04 Subindo o cliente para consumo da API
+
+
+
+
+[01:02] Então, a solução é a seguinte: vamos rodar um contêiner bem simples e esse contêiner vai consumir a nossa aplicação em todos os endpoints que ela possui e, inclusive, gerar alguns erros de tempo em tempo para que tenhamos todas as métricas devidamente alimentadas.
+
+[01:23] Para fazer isso, eu quero que você acesse a pasta em que está toda a configuração – no meu caso, está no workdir do Eclipse, eu estou no Linux, e aqui tem dentro tem um diretório chamado client.
+
+[01:43] Eu chamo de “diretório”, se você está no Windows, você está mais habituado a ouvir “pasta”, mas já faz esse link, quando eu chamar diretório, é pasta.
+
+[01:53] Vamos entrar no client, nesse diretório, e aqui dentro eu tenho um Dockerfile e um script Shell, um script em linguagem de Terminal do Linux. Não se preocupa porque o contêiner é Linux, então é esse script mesmo que tem que rodar, sem nenhuma modificação.
+
+[02:13] Vamos conhecer esse Dockerfile para que você possa entender o que vamos fazer. Nesse Dockerfile, vamos gerar um contêiner derivado da imagem do debian, da última versão da imagem, por isso que não estou com tagueamento de versão para ele.
+
+
+
+/home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/client/client.sh
+
+~~~~bash
+#!/bin/bash
+
+# Com as ocnfigurações atuais, o client faz uma requisição por segundo,
+# Para aumentar o número de requisições por segundo, descomente as linhas 
+# 14 e 32 e comente a linha 33, você terá que remover tanto a imagem como
+# o container client-forum-api e subir a stack novamente para o rebuild.
+
+HOST='proxy-forum-api'
+
+while true
+    do
+	ENDP=`expr $RANDOM % 3 + 1`
+	NUMB=`expr $RANDOM % 100 + 1`
+	#TEMP=`expr 1 + $(awk -v seed="$RANDOM" 'BEGIN { srand(seed); printf("%.4f\n", rand()) }')`
+        
+	if [ $NUMB -le 55 ]; then
+	    curl --silent --output /dev/null http://${HOST}/topicos
+        elif [ $NUMB -ge 56 ] && [ $NUMB -le 85 ] ; then
+	    curl --silent --output /dev/null http://${HOST}/topicos/$ENDP
+        elif [ $NUMB -ge 86 ] && [ $NUMB -le 95 ] ; then
+	    curl --silent --output /dev/null --data '{"email":"moderador@email.com","senha":"123456"}' \
+		 --header "Content-Type:application/json" \
+		 --request POST http://${HOST}/auth
+        elif [ $NUMB -ge 96 ] && [ $NUMB -le 98 ] ; then
+	    curl --silent --output /dev/null --data '{"email":"moderador@email.com","senha":"1234567"}' \
+	         --header "Content-Type:application/json" \
+	         --request POST http://${HOST}/auth
+	else
+	    curl --silent --output /dev/null http://${HOST}/topicos/0
+        fi
+
+	#sleep $TEMP
+	sleep 0.75
+done
+~~~~
+
+
+
+- Script do Dockerfile:
+
+~~~~Dockerfile
+FROM debian
+
+USER root
+
+COPY ./client.sh /scripts/client.sh
+
+RUN apt update && \
+        apt install curl -y && \
+        chmod +x /scripts/client.sh
+
+ENTRYPOINT ["/scripts/client.sh"]
+~~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+[09:17] Saindo desse escopo, temos o nosso Dockerfile. Abrindo esse Dockerfile, você vai notar que o seu está com o último bloco comentado. Vamos descomentar esse bloco e eu vou te explicar o que esse bloco está fazendo.
+
+[09:38] Esse server que vai ser gerado no Docker Compose se chama client-forum-api, ele vai fazer um build. O contexto desse build é no diretório client, e lá ele vai encontrar um Dockerfile. Você já sabe o que o Dockerfile faz e o que o script faz também.
+
+[10:00] Ele vai gerar uma imagem chamada client-forum-api e um contêiner derivado dessa imagem chamado client-forum-api também. Se esse contêiner for derrubado, ele não vai subir.
+
+[10:15] Todos os contêineres estão com essa configuração porque, em dado momento, vamos realmente derrubar alguma coisa para verificar como que as métricas vão ser alimentadas e, principalmente, para testar os alertas que serão feitos mais para frente.
+
+[10:31] Ele está dentro da rede proxy e qual é a dependência dele? O prometheus-forum-api, o contêiner do Prometheus. Por que ele depende do Prometheus? Porque temos uma cadeia de dependências que permite somente que um contêiner suba após o sucesso do outro.
+
+[10:48] Isso começa desde o primeiro service que possuímos aqui, o redis. O redis não depende de ninguém, ele tem que subir; após o redis, tem o mysql, que depende do redis; depois, tem o redis-forum-api, que depende do mysql; depois, o proxy, que depende do app; e o prometheus, que depende do proxy; e, por último, o client, que depende do prometheus.
+
+
+~~~~yaml
+  client-forum-api:
+    build:
+      context: ./client/
+      dockerfile: Dockerfile
+    image: client-forum-api
+    container_name: client-forum-api
+    restart: unless-stopped
+    networks:
+      - proxy
+    depends_on:
+      - proxy-forum-api
+~~~~
