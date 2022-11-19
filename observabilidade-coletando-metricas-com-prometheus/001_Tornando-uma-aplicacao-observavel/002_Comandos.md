@@ -1,5 +1,9 @@
 
 
+- Diretório principal:
+cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/
+
+
 - Subindo stack
 cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/
 docker-compose up

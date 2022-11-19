@@ -229,3 +229,53 @@ total 16K
 4.0K -rw-r--r-- 1 fernando fernando  346 Nov 14 23:32 prometheus.yml
 root@debian10x64:/home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/prometheus#
 ~~~~
+
+
+
+
+
+
+
+
+
+# Scrape interval
+
+[09:30] O que muda aqui? Eu defini como 5s. A regra é que, para qualquer configuração de scrape – scrape é o tempo que o Prometheus demora para fazer uma consulta em um endpoint de métrica, então, scrape_interval, scrape_time, enfim, é o tempo do Prometheus entre uma consulta e outra em um endpoint de métricas.
+
+[09:56] Eu coloquei 5s, isso está global. Eu posso mudar isso? Posso, é só fazer uma configuração diferente em algum job. Como é a divisão disso? Eu tenho aqui scrape_interval, que é uma característica global nessa configuração, e tenho scrape_configs, que são as configurações de scrape personalizadas.
+
+[10:20] Se eu quiser sobrescrever isso e mudar o valor em alguma scrape_config, eu tenho que trabalhar dentro do escopo de um job. Tenho aqui job_name: prometheus-forum-api, que é aquela consulta que o Prometheus faz nele mesmo.
+
+[10:37] Aqui, o meu scrape_interval é de 15s; o timeout de 10s. Então, ele está sobrescrevendo a configuração global aqui. Qual é o metrics_path que ele olha, qual o path de métricas? É o /metrics.
+
+~~~~yaml
+global:
+  scrape_interval: 5s
+scrape_configs:
+- job_name: prometheus-forum-api
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - prometheus-forum-api:9090
+- job_name: app-forum-api
+  metrics_path: /actuator/prometheus
+  static_configs:
+  - targets:
+    - app-forum-api:8080
+~~~~
+
+
+[11:17] Aqui, em metrics_path, o path, o endpoint em que a métrica está. É legal que uma informação complementa a outra. Aqui, tenho outro job_name que, nesse caso, é o app-forum-api.
+
+[11:38] O metrics_path dele é em /actuator/prometheus e a static_configs tem um target que é o app-forum-api:8080. Se formos avaliar, você vai ver que esse job app-forum-api está com o scrape_interval de 5s, está herdando a característica da configuração global.
+
+[12:04] Não estou sobrescrevendo, acho que 5 segundos é o ideal nesse caso para olharmos para uma API, mas você pode customizar isso. Fiz uma pequena divisão no arquivo para ele ficar legível, não iria causar nenhum erro, mas estou retornando-o para o formato normal.
+
+
+
+- O padrão tá setado em 5s.
+- É possível definir scrape interval personalizados, com escopo de jobs. Tenho scrape_configs, que são as configurações de scrape personalizadas.
+
