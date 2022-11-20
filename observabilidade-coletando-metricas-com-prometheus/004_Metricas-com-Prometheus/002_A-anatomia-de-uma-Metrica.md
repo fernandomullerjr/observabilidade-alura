@@ -328,6 +328,20 @@ logback_events_total{application="app-forum-api", instance="app-forum-api:8080",
 2 @1668824307.366
 2 @1668824312.366
 
+[08:12] Notem que teve uma transformação aqui, eu estou olhando justamente para esse timestamp, posso tirá-lo e refazer a consulta, vai dar na mesma. O que estou trazendo é o último minuto dentro desse timestamp.
+
+[08:32] Esse foi o timestamp de execução da consulta, eu quero o último minuto. No último minuto, eu tenho essas informações que voltaram. Notem que o range vector não seria uma matriz, não temos um vetor multidimensional, mas temos, em cada série temporal, um “vetor” que traz um valor específico a cada scrape time do Prometheus.
+
+[09:08] Vamos lembrar a nossa configuração. Já vimos isso em uma aula anterior. Se eu abrir aqui e for em “Configuration”, você vai ver que o nosso job app-forum-api tem o scrape de 5s. Então, a cada 5 segundos o Prometheus vai lá e bate no endpoint para trazer as métricas.
+
+[09:34] Justamente aqui, em 1 minuto, nós tivemos essa quantidade aqui, 12 consultas, cada uma a 5 segundos, o que equivale a 60 segundos de trabalho do Prometheus buscando métricas.
+
+[09:56] Alguns estão com valores e outros não, não está dando para pegarmos uma mudança aqui nesses valores, mas normalmente vamos enxergar mudanças.
+
+[10:04] Aqui tem uma notação meio estranha, que é o unix timestamp. Se você quiser entender o que é isso, no Linux é fácil – se você estiver no Windows, deve ter uma forma fácil de você fazer no PowerShell, ou você vai no browser e dá uma "googlada" “unix timestamp” que você vai encontrar um jeito de converter.
+
+
+
 
 
 
@@ -339,6 +353,7 @@ fernando@debian10x64:~$ date -d @1668824257.369
 Fri 18 Nov 2022 11:17:37 PM -03
 fernando@debian10x64:~$
 ~~~~
+
 
 
 
@@ -369,7 +384,7 @@ fernando@debian10x64:~$
 
 
 
-- Range de tempo numa série temporal:
+- Range de tempo / Range Vector numa série temporal:
 logback_events_total[1m]
 
 
