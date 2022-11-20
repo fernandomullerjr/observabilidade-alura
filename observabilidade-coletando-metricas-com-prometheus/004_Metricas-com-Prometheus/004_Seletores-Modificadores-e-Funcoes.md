@@ -108,3 +108,12 @@ git status
 # ##############################################################################################################################################################
 # ##############################################################################################################################################################
 # 04 Seletores, Modificadores e Funções
+
+
+
+[00:00] Vamos dar continuidade ao nosso curso. Na aula anterior, nós falamos sobre tipos de métricas. Agora, já vamos entrar em outro assunto que está relacionado a seletores, agregadores e funções. Vamos ter uma prévia sobre isso para você entender como você pode manipular uma métrica e obter o resultado que você precisa.
+
+[00:29] Para começarmos a falar desse assunto, vou trabalhar com essa métrica que é o http_server_requests_seconds_count. Eu tenho essa métrica, se eu executar a consulta no Prometheus, ele vai me trazer esse instant vector que tem várias séries temporais, mas vou fazer uma filtragem.
+
+
+http_server_requests_seconds_count
