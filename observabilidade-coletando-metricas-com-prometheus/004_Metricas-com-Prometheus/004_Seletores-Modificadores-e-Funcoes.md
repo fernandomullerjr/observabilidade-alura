@@ -117,3 +117,129 @@ git status
 
 
 http_server_requests_seconds_count
+
+- Se eu executar a consulta no Prometheus, ele vai me trazer esse instant vector que tem várias séries temporais:
+
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="CLIENT_ERROR", status="404", uri="/topicos/{id}"}
+	149
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/actuator/prometheus"}
+	1193
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos"}
+	4110
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	2152
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="POST", outcome="CLIENT_ERROR", status="400", uri="/auth"}
+	240
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="POST", outcome="SUCCESS", status="200", uri="/auth"}
+	763
+
+
+
+
+
+# ##############################################################################################################################################################
+# Seletores
+
+[00:49] Vou colocar o application="app-forum-api", vou colocar qual é o método que vamos olhar, method="GET". Vamos também fazer uma verificação no status="200", requisições que retornaram sucesso. Está de bom tamanho, por hora, vamos executar, http_server_requests_seconds_count{application="app-forum-api",method="GET",status="200"}.
+
+- Consulta:
+http_server_requests_seconds_count{application="app-forum-api",method="GET",status="200"}
+
+- Resultado:
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/actuator/prometheus"}
+	1215
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos"}
+	4178
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	2196
+
+
+[01:25] Executando essa consulta, o nosso retorno trouxe para nós um endpoint chamado actuator/prometheus; trouxe também o /topicos e o topicos/{id}. O actuator/prometheus não é um endpoint consumido pelos nossos usuários, então ele não nos interessa nessa visualização.
+
+[01:49] O que vamos fazer? Vamos trabalhar com um seletor de negação. Vou colocar na uri tudo que for diferente de actuator/prometheus, http_server_requests_seconds_count{application="app-forum-api",method="GET",status="200",uri!="/actuator/prometheus"}. Melhorou um pouco a situação porque tive agora o /topicos e o /topicos{id} retornando para mim a contagem de requisições.
+
+- Seletor de negação:
+!=
+
+- Consulta:
+http_server_requests_seconds_count{application="app-forum-api",method="GET",status="200",uri!="/actuator/prometheus"}
+
+- Resultado:
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos"}
+	4422
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	2331
+
+
+
+
+
+
+
+
+
+
+
+# Time series Selectors
+Instant vector selectors
+<https://prometheus.io/docs/prometheus/latest/querying/basics/#operators>
+Instant vector selectors allow the selection of a set of time series and a single sample value for each at a given timestamp (instant): in the simplest form, only a metric name is specified. This results in an instant vector containing elements for all time series that have this metric name.
+
+This example selects all time series that have the http_requests_total metric name:
+
+    http_requests_total
+
+It is possible to filter these time series further by appending a comma separated list of label matchers in curly braces ({}).
+
+This example selects only those time series with the http_requests_total metric name that also have the job label set to prometheus and their group label set to canary:
+
+    http_requests_total{job="prometheus",group="canary"}
+
+It is also possible to negatively match a label value, or to match label values against regular expressions. The following label matching operators exist:
+
+    =: Select labels that are exactly equal to the provided string.
+    !=: Select labels that are not equal to the provided string.
+    =~: Select labels that regex-match the provided string.
+    !~: Select labels that do not regex-match the provided string.
+
+Regex matches are fully anchored. A match of env=~"foo" is treated as env=~"^foo$".
+
+For example, this selects all http_requests_total time series for staging, testing, and development environments and HTTP methods other than GET.
+
+    http_requests_total{environment=~"staging|testing|development",method!="GET"}
+
+
+
+
+
+
+
+
+
+
+
+[02:12] Só que existe também uma autenticação que ocorre nessa aplicação e ela é através do método “POST”, então eu preciso mudar o meu seletor para que consiga obter esse resultado.
+
+[02:26] Para fazer isso, é bem simples. Quando vou trabalhar com o "ou" lógico aqui dentro do Prometheus, da linguagem PromQL, eu tenho que mudar o meu seletor e usar esse seletor com acento que, basicamente, é um seletor que suporta uma espécie de regex.
+
+[02:45] Vou colocar method=~"GET|POST" e vou executar. Legal, tenho aqui esse retorno que é o método POST com sucesso, status="200", em /auth.
+
+- Iremos usar esse seletor, que faz o match do Regex:
+=~: Select labels that regex-match the provided string.
+
+- Trocando:
+de:
+method="GET"
+para:
+method=~"GET|POST"
+
+- Consulta:
+http_server_requests_seconds_count{application="app-forum-api",method=~"GET|POST",status="200",uri!="/actuator/prometheus"}
+
+- Resultado:
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos"}
+	4659
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	2456
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="POST", outcome="SUCCESS", status="200", uri="/auth"}
+	861
