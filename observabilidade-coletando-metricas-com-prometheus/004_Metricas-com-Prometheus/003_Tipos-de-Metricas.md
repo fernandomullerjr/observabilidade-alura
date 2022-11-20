@@ -147,6 +147,7 @@ https://prometheus.io/docs/concepts/metric_types/#metric-types
 valor que é incrementado apenas, de forma simples
 
 - Gauge
+em português é "medidor".
 valor que pode variar, pode descer ou subir
 
 - Histogram
@@ -156,12 +157,34 @@ valor que pode variar, pode descer ou subir
 
 
 
+# RESUMO - explicação sobre métricas do Prometheus
+<https://cloud.google.com/stackdriver/docs/solutions/slo-monitoring/sli-metrics/prometheus?hl=pt-br>
+Métrica
+O Prometheus é compatível com os seguintes tipos de métricas:
+    Contador: um único valor que só pode ser aumentado monotonicamente ou redefinido para 0 na reinicialização.
+    Medidor: um valor numérico único que pode ser definido arbitrariamente.
+    Histograma: um grupo de buckets configuráveis para amostragem de observações e gravação de valores em intervalos, também fornece uma soma de todos os valores observados.
+    Resumo: como um histograma, mas também calcula quantis configuráveis em uma janela de tempo variável.
 
 
 
 
 
 # Histogram
+
+Histogram
+
+A histogram samples observations (usually things like request durations or response sizes) and counts them in configurable buckets. It also provides a sum of all observed values.
+
+A histogram with a base metric name of <basename> exposes multiple time series during a scrape:
+
+    cumulative counters for the observation buckets, exposed as <basename>_bucket{le="<upper inclusive bound>"}
+    the total sum of all observed values, exposed as <basename>_sum
+    the count of events that have been observed, exposed as <basename>_count (identical to <basename>_bucket{le="+Inf"} above)
+
+Use the histogram_quantile() function to calculate quantiles from histograms or even aggregations of histograms. A histogram is also suitable to calculate an Apdex score. When operating on buckets, remember that the histogram is cumulative. See histograms and summaries for details of histogram usage and differences to summaries.
+NOTE: Beginning with Prometheus v2.40, there is experimental support for native histograms. A native histogram requires only one time series, which includes a dynamic number of buckets in addition to the sum and count of observations. Native histograms allow much higher resolution at a fraction of the cost. Detailed documentation will follow once native histograms are closer to becoming a stable feature.
+
 
 [07:28] Aí chegamos em uma métrica mais complicada, do tipo "Histogram". O hstogram traz observações que estão mais relacionadas à duração e ao tamanho de resposta.
 
@@ -190,3 +213,133 @@ http_server_requests_seconds_bucket{status="200",uri="/topicos/(id)",le="0.05"}
 - Ver sobre buckets do Histogram, entender melhor.
 continuar em 12:08
 - Ver sobre DOC do Prometheus.
+
+
+
+
+
+# Histogram
+
+Normalmente, ele traz as métricas com os Buckets e ao final traz uma count e uma sum:
+
+# TYPE http_server_requests_seconds histogram
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="GET",outcome="SUCCESS",status="200",uri="/topicos/{id}",le="0.05",} 29.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="GET",outcome="SUCCESS",status="200",uri="/topicos/{id}",le="0.1",} 33.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="GET",outcome="SUCCESS",status="200",uri="/topicos/{id}",le="0.2",} 33.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="GET",outcome="SUCCESS",status="200",uri="/topicos/{id}",le="0.3",} 33.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="GET",outcome="SUCCESS",status="200",uri="/topicos/{id}",le="+Inf",} 34.0
+http_server_requests_seconds_count{application="app-forum-api",exception="None",method="GET",outcome="SUCCESS",status="200",uri="/topicos/{id}",} 34.0
+http_server_requests_seconds_sum{application="app-forum-api",exception="None",method="GET",outcome="SUCCESS",status="200",uri="/topicos/{id}",} 4.146014981
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="POST",outcome="SUCCESS",status="200",uri="/auth",le="0.05",} 0.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="POST",outcome="SUCCESS",status="200",uri="/auth",le="0.1",} 0.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="POST",outcome="SUCCESS",status="200",uri="/auth",le="0.2",} 0.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="POST",outcome="SUCCESS",status="200",uri="/auth",le="0.3",} 14.0
+http_server_requests_seconds_bucket{application="app-forum-api",exception="None",method="POST",outcome="SUCCESS",status="200",uri="/auth",le="+Inf",} 18.0
+http_server_requests_seconds_count{application="app-forum-api",exception="None",method="POST",outcome="SUCCESS",status="200",uri="/auth",} 18.0
+http_server_requests_seconds_sum{application="app-forum-api",exception="None",method="POST",outcome="SUCCESS",status="200",uri="/auth",} 6.73250893
+
+
+
+
+
+
+[09:35] Eu copiei a métrica, que é http_server_requests_seconds_bucket e aqui eu tenho todos esses labels. Eu não preciso da maioria deles, eu posso retirar toda essa informação e deixar só status="200",uri="/topicos/(id)", aí tem essa regra que é uma condição, le.
+
+http_server_requests_seconds_bucket{status="200",uri="/topicos/{id}",le="0.05",}
+
+- Executando a consulta na console do Prometheus, retorna isto:
+http_server_requests_seconds_bucket{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", le="0.05", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	1298
+
+
+
+
+
+
+
+
+
+
+
+[11:06] Se eu tirar esse le=”1.0” e executar, ele vai trazer todas as séries temporais que eu tenho relacionadas aos buckets. Aqui é acima de 1 segundo, é infinito e além, esse +inf, é infinito, é acima de 1 segundo.
+
+[11:32] Aqui, temos toda essa configuração retornando para nós. Então, uma métrica do tipo histogram vai nos auxiliar a fazer esse tipo de medição que é importantíssima para entendermos o tempo de resposta da nossa API e, principalmente, se estamos cumprindo o nosso SLA.
+
+- Executando:
+http_server_requests_seconds_bucket{status="200",uri="/topicos/{id}"}
+
+- Retorna isto:
+http_server_requests_seconds_bucket{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", le="+Inf", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	1377
+http_server_requests_seconds_bucket{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", le="0.05", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	1365
+http_server_requests_seconds_bucket{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", le="0.1", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	1374
+http_server_requests_seconds_bucket{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", le="0.2", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	1376
+http_server_requests_seconds_bucket{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", le="0.3", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	1376
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[12:08] Voltando, eu posso fazer uma modificação, vou fazer direto, posso colocar a soma, sum, qual a soma de todos os segundos que eu tenho dessas requisições: http_server_requests_seconds_sum{status="200",uri="/topicos/(id)"}.
+
+- Consulta:
+http_server_requests_seconds_sum{status="200",uri="/topicos/{id}"}
+
+- Resultado:
+http_server_requests_seconds_sum{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	22.334151492
+
+[12:23] Está aqui, trouxe um valor que é difícil de entender sem usar uma função. 
+E posso trazer a contagem, o número total, sem distinções relacionadas a buckets (http_server_requests_seconds_count{status="200",uri="/topicos/(id)"}). Tenho 432 requisições.
+
+- Consulta:
+http_server_requests_seconds_count{status="200",uri="/topicos/{id}"}
+
+- Resultado:
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	1735
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Summary
+
+[13:04] O histogram também é uma métrica cumulativa. Além de ela ser cumulativa, ela tem uma função que é bem interessante utilizarmos, que é o histogram_quantile, que trabalha com quantiles, então você consegue fazer especificações de quantiles através dessa função e trabalhar bem com ela. Vamos fazer isso mais a frente.
+
+[13:27] Voltando para o summary. Como eu tinha dito, o summary é uma métrica muito similar ao histogram, a própria documentação diz isso, só que ele é mais usualmente utilizado para você ter a duração de uma requisição e o tamanho da resposta que você tem para uma requisição.
+
+[13:49] Além disso, você consegue ter tanto o somatório quanto a contagem – o somatório de segundos da métrica e a contagem total de eventos que foram captados na métrica.
+
+[14:05] Uma coisa bem legal é que você também pode calcular quantiles configuráveis de uma forma customizada. Você consegue fazer isso dentro de uma janela de tempo e, para você entender melhor desse assunto, já que ele é um pouco complexo e não tem como esgotá-lo em uma aula, eu vou deixar essa página da documentação do Prometheus.
+
+[14:31] Entrando nela, é legal você abrir esse link “Histograms and summaries” para você ter uma explicação mais detalhada sobre a utilização de quantiles dentro da composição de uma métrica.
+
+[14:45] Para você poder fazer uma consulta que seja mais específica e traga o resultado que você precisa, de uma forma que realmente agregue valor para a sua instrumentação e para a sua composição de dashboard.
