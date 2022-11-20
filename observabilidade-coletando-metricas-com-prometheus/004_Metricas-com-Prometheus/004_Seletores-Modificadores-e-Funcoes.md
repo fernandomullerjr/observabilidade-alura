@@ -243,3 +243,80 @@ http_server_requests_seconds_count{application="app-forum-api", exception="None"
 	2456
 http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="POST", outcome="SUCCESS", status="200", uri="/auth"}
 	861
+
+
+
+
+
+
+
+
+
+[03:23] Vamos trabalhar novamente com o nosso seletor com acento. Ao invés de usarmos 200, vamos usar um coringa, que é o ponto. O ponto é um coringa que equivale a qualquer caractere – como no Unix ou Linux, você utiliza o asterisco.
+
+[03:42] Está aqui, status="2..". Você vê que não mudou nada a consulta está certa. Vamos expandir isso, vamos imaginar que, de repente, a sua API está por detrás de um CDN, tem um redirecionamento, um proxy, então tem também a família 300. Vamos colocar status="2..|3..".
+
+- Iremos usar esse seletor, que faz o match do Regex:
+=~: Select labels that regex-match the provided string.
+
+- Trocando:
+de:
+status="200"
+para:
+status="2..|3.."
+
+- Consulta:
+http_server_requests_seconds_count{application="app-forum-api",method=~"GET|POST",status=~"2..|3..",uri!="/actuator/prometheus"}
+
+- Resultado:
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos"}
+	6035
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	3158
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="POST", outcome="SUCCESS", status="200", uri="/auth"}
+	1126
+
+
+
+
+
+
+
+
+[04:22] Agora vamos imaginar no caso em que você quer simplesmente pegar os erros. Eu preciso saber o que não está dando certo, o que podemos mudar? Vamos no seletor e vamos criar um seletor de negação que suporta o nosso regex: status!~"2..|3..".
+
+[04:44] Vou trabalhar com esse seletor e aqui tenho o retorno dos erros que captei na minha aplicação. Teve erro 500, 404, 400 e mais outro 500 aqui embaixo. Dessa forma, conseguimos trabalhar dentro de uma métrica fazendo uma consulta customizada para pegarmos o resultado que é realmente importante para nós.
+
+- Trocando:
+de:
+status="2..|3.."
+para:
+status!~"2..|3.."
+
+- Consulta:
+http_server_requests_seconds_count{application="app-forum-api",method=~"GET|POST",status!~"2..|3..",uri!="/actuator/prometheus"}
+
+- Resultado:
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="CLIENT_ERROR", status="404", uri="/topicos/{id}"}
+	239
+http_server_requests_seconds_count{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="POST", outcome="CLIENT_ERROR", status="400", uri="/auth"}
+	342
+
+
+
+
+
+
+
+
+
+
+# offset
+
+[05:14] Saindo dessa questão de seletores, um detalhe, eu posso também fazer uma aglutinação de resultados. Se eu olhar para o “Evaluation time”, esse é o timestamp da consulta que eu fiz, estou pegando essa informação com uma restrição de tempo.
+
+[05:46] Vamos imaginar que eu quero olhar o que aconteceu, em termos de número, no último 1 minuto. Vou trabalhar com o modificador offset e vou setar 1m, http_server_requests_seconds_count{application="app-forum-api",method=~"GET|POST",status!~"2..|3..",uri!="/actuator/prometheus} offset 1m
+
+[06:02] Vou executar, ele pegou o resultado do último minuto. Estamos fazendo uma observação, em uma série temporal, de 1 minuto. Saindo desse escopo, se você quiser dar uma olhada, vai em “Help”. Eu vou deixar o link da documentação.
+
+[06:28] Mas, basicamente, esse conteúdo está em “Querying > Basics”. Se procurarmos aqui, o modificador offset, está tudo na documentação e eu vou deixar o link para vocês.
