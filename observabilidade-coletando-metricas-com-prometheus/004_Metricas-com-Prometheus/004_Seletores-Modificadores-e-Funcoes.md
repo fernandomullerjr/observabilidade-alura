@@ -534,9 +534,30 @@ http_server_requests_seconds_count{application="app-forum-api", exception="None"
 
 [11:40] O irate basicamente olha os dois últimos data points coletados em relação ao momento da sua consulta. Então, não é uma função que eu vou utilizar para criar uma métrica para a SLI, por exemplo.
 
-http_server_requests_seconds_count{application="app-forum-api", uri!="/actuator/prometheus"}[5m]
+- Consulta:
+	irate(http_server_requests_seconds_count{application="app-forum-api", uri!="/actuator/prometheus"}[5m])
 
-<https://prometheus.io/docs/prometheus/latest/querying/functions/#irate>
+- Resultado:
+{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="CLIENT_ERROR", status="404", uri="/topicos/{id}"}
+	0
+{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos"}
+	0.6004803843074459
+{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+	0.4003202562049639
+{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="POST", outcome="CLIENT_ERROR", status="400", uri="/auth"}
+	0.20016012810248196
+{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="POST", outcome="SUCCESS", status="200", uri="/auth"}
+	0.20016012810248196
+
+
+- É possível agregar o irate, usando o sum:
+	sum(irate(http_server_requests_seconds_count{application="app-forum-api", uri!="/actuator/prometheus"}[5m]))
+
+- Resultado:
+{}
+	1.4
+
+
 
 #  irate()
 
@@ -546,8 +567,9 @@ irate(v range-vector) calculates the per-second instant rate of increase of the 
 
 The following example expression returns the per-second rate of HTTP requests looking up to 5 minutes back for the two most recent data points, per time series in the range vector:
 
-irate(http_requests_total{job="api-server"}[5m])
+	irate(http_requests_total{job="api-server"}[5m])
 
 irate should only be used when graphing volatile, fast-moving counters. Use rate for alerts and slow-moving counters, as brief changes in the rate can reset the FOR clause and graphs consisting entirely of rare spikes are hard to read.
 
 Note that when combining irate() with an aggregation operator (e.g. sum()) or a function aggregating over time (any function ending in _over_time), always take a irate() first, then aggregate. Otherwise irate() cannot detect counter resets when your target restarts.
+
