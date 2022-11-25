@@ -1,0 +1,17 @@
+{
+	"ulid": "01GJPBS1SBPPFM2WVCZPV61DXD",
+	"minTime": 1669334546315,
+	"maxTime": 1669341600000,
+	"stats": {
+		"numSamples": 449542,
+		"numSeries": 687,
+		"numChunks": 3748
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01GJPBS1SBPPFM2WVCZPV61DXD"
+		]
+	},
+	"version": 1
+}

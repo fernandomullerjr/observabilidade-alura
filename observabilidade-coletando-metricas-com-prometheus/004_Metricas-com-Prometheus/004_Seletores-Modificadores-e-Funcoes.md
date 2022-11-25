@@ -573,3 +573,9 @@ irate should only be used when graphing volatile, fast-moving counters. Use rate
 
 Note that when combining irate() with an aggregation operator (e.g. sum()) or a function aggregating over time (any function ending in _over_time), always take a irate() first, then aggregate. Otherwise irate() cannot detect counter resets when your target restarts.
 
+
+
+
+Mais detalhes:
+https://utcc.utoronto.ca/~cks/space/blog/sysadmin/PrometheusRateVsIrate
+<https://utcc.utoronto.ca/~cks/space/blog/sysadmin/PrometheusRateVsIrate>
