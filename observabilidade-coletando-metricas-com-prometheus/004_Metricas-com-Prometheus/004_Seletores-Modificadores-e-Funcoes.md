@@ -182,7 +182,7 @@ http_server_requests_seconds_count{application="app-forum-api", exception="None"
 
 # Time series Selectors
 Instant vector selectors
-<https://prometheus.io/docs/prometheus/latest/querying/basics/#operators>
+<https://prometheus.io/docs/prometheus/latest/querying/basics/>
 Instant vector selectors allow the selection of a set of time series and a single sample value for each at a given timestamp (instant): in the simplest form, only a metric name is specified. This results in an instant vector containing elements for all time series that have this metric name.
 
 This example selects all time series that have the http_requests_total metric name:
@@ -263,7 +263,7 @@ http_server_requests_seconds_count{application="app-forum-api", exception="None"
 de:
 status="200"
 para:
-status="2..|3.."
+status=~"2..|3.."
 
 - Consulta:
 http_server_requests_seconds_count{application="app-forum-api",method=~"GET|POST",status=~"2..|3..",uri!="/actuator/prometheus"}
