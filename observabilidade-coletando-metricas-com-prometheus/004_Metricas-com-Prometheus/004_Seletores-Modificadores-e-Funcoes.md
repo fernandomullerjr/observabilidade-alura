@@ -579,3 +579,31 @@ Note that when combining irate() with an aggregation operator (e.g. sum()) or a 
 Mais detalhes:
 https://utcc.utoronto.ca/~cks/space/blog/sysadmin/PrometheusRateVsIrate
 <https://utcc.utoronto.ca/~cks/space/blog/sysadmin/PrometheusRateVsIrate>
+
+
+
+
+
+
+
+
+
+
+[11:40] O irate basicamente olha os dois últimos data points coletados em relação ao momento da sua consulta. Então, não é uma função que eu vou utilizar para criar uma métrica para a SLI, por exemplo.
+
+- É possível agregar o irate, usando o sum:
+	sum(irate(http_server_requests_seconds_count{application="app-forum-api", uri!="/actuator/prometheus"}[5m]))
+
+- Resultado:
+{}
+	1.2
+
+[12:00] Não, porque é uma função para eu saber, em um momento exato, em um trecho curto de observabilidade, um dado que eu preciso. No nosso caso, o número de requisições.
+
+[12:14] Se eu levar isso para a parte gráfica, está aqui, ele coloca cada um dos endpoints que ele conseguiu coletar e temos esse retorno já "plotado" em forma de gráfico. Eu poderia fazer uma agregação utilizando sum? Poderia, eu posso agregar esse resultado. Está aqui.
+
+[12:37] Basicamente, se eu olhar para esse resultado, ele vai dizer que, por segundo, eu tive uma média de 1.2 requisições a cada segundo; no gráfico, quando fazemos a agregação, o resultado é esse.
+
+[12:54] Não vou esgotar o assunto de funções agora, vamos lidar com funções até a última aula e vamos explorar melhor isso no próximo capítulo. Porém, no próximo capítulo, vamos subir o Grafana, vamos configurar o Grafana e já começar a construir o nosso dashboard para a nossa API.
+
+[13:15] No decorrer dessa construção, vamos amadurecer ainda mais na linguagem PromQL. Te vejo na próxima aula.
