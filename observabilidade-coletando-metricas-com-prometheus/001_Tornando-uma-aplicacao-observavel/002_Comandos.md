@@ -75,3 +75,11 @@ fernando@debian10x64:~$
 - iterando array
 array=( @1668824257.369 @1668824262.368 @1668824267.369 @1668824272.369 )
 for i in "${array[@]}" ; do date -d $i ; done
+
+
+
+
+
+
+- Curso2 - diretório:
+cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01

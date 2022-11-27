@@ -75,6 +75,7 @@ services:
 
   prometheus-forum-api:
     image: prom/prometheus:latest
+    user: "1000:1000"
     container_name: prometheus-forum-api
     restart: unless-stopped
     volumes:

@@ -104,3 +104,132 @@ git status
 [13:45] Essa é a subida do Grafana e a configuração mais básica, que é a seleção de um data source e a criação de uma pasta em que o nosso dash será configurado.
 
 [13:57] Na próxima aula, vamos trabalhar com as variáveis que vamos utilizar no Grafana. É isso, te vejo na próxima aula.
+
+
+
+
+
+
+
+
+
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# 03 Subindo o Grafana
+
+
+[00:48] O primeiro ponto, estou no meu workdir, estou no path em que está o meu Docker Compose. Vou criar um diretório chamado grafana. Esse diretório, essa pasta vai servir como um volume para o contêiner, e vai ser onde o Grafana armazena suas informações.
+
+[01:13] Após criar esse diretório, vou aplicar um chmod para mudar as permissões dele para 777, então chmod 777 grafana, acabei digitando sem colocar o Grafana.
+
+
+
+cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+
+~~~~bash
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ ls -lhasp
+total 36K
+4.0K drwxr-xr-x 8 fernando fernando 4.0K Nov 26 20:51 ./
+4.0K drwxr-xr-x 3 fernando fernando 4.0K Nov 26 20:51 ../
+4.0K drwxr-xr-x 6 fernando fernando 4.0K Nov 26 20:51 app/
+4.0K drwxr-xr-x 2 fernando fernando 4.0K Nov 26 20:51 client/
+4.0K -rw-r--r-- 1 fernando fernando 2.6K Nov 26 20:51 docker-compose.yaml
+4.0K drwxr-xr-x 2 fernando fernando 4.0K Nov 26 20:51 Grafana/
+4.0K drwxr-xr-x 2 fernando fernando 4.0K Nov 26 20:51 mysql/
+4.0K drwxr-xr-x 2 fernando fernando 4.0K Nov 26 20:51 nginx/
+4.0K drwxr-xr-x 3 fernando fernando 4.0K Nov 26 20:51 prometheus/
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+~~~~
+
+
+
+
+
+[05:52] No esquema de dependências, se olharmos aqui, você vai ver que temos o redis subindo primeiro; o mysql sobe depois do redis e depende do redis para subir; o app depende do mysql, por sua vez, para subir – aqui está a dependência dele, mysql-forum-api.
+
+[06:16] O proxy depende do app para subir, da API; e o prometheus depende do proxy. Agora, o grafana depende do prometheus e o client depende do grafana.
+
+[06:31] Sem essa configuração, do jeito que estava antes, apesar do contêiner do mysql subir, ele ainda não estava com a base configurada e o client já enviava requisições, o que resultava em alguns erros 500 que vocês podem observar nas métricas anteriores que nós verificamos.
+
+[06:52] Inclusive, você vai conseguir verificar nas suas métricas que isso vai acontecer. Aqui, nós coibimos um pouco dessa falha porque o contêiner do client só vai começar a disparar suas requisições depois que o grafana tiver subido e isso dá um tempo a mais para o MySQL se organizar e estar bem das pernas nessa hora.
+
+[07:13] Vou salvar o conteúdo e vou rodar o comando docker-compose up -d para ele subir em modo daemon. Ele vai baixar a imagem do Grafana, vai fazer todo esse processo conhecido, você já viu isso sobre contêineres.
+
+docker-compose up -d
+
+
+cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+
+~~~~bash
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ docker-compose up -d
+Creating network "conteudo_01_cache" with the default driver
+Creating network "conteudo_01_database" with the default driver
+Creating network "conteudo_01_api" with the default driver
+Creating network "conteudo_01_proxy" with the default driver
+Creating network "conteudo_01_monit" with the default driver
+Creating redis-forum-api ... done
+Creating mysql-forum-api ... done
+Creating app-forum-api   ... done
+Creating proxy-forum-api ... done
+Creating prometheus-forum-api ... done
+Creating grafana-forum-api    ... done
+Creating client-forum-api     ... done
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED         STATUS                          PORTS                               NAMES
+8b9c0c16991f   client-forum-api         "/scripts/client.sh"     5 minutes ago   Up 5 minutes                                                        client-forum-api
+78bfcfa2b1e8   grafana/grafana          "/run.sh"                5 minutes ago   Restarting (1) 40 seconds ago                                       grafana-forum-api
+914b8464b314   prom/prometheus:latest   "/bin/prometheus --c…"   5 minutes ago   Restarting (2) 39 seconds ago                                       prometheus-forum-api
+8a762187b11b   nginx                    "/docker-entrypoint.…"   5 minutes ago   Up 5 minutes                    0.0.0.0:80->80/tcp, :::80->80/tcp   proxy-forum-api
+0bbea937c7c7   app-forum-api            "java -Xms128M -Xmx1…"   5 minutes ago   Up 5 minutes (unhealthy)                                            app-forum-api
+c9801db3a140   mysql:5.7                "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes                                                        mysql-forum-api
+bced4d709071   redis                    "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes                                                        redis-forum-api
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+
+~~~~
+
+
+
+
+
+- Containers com falha "Restarting"
+
+- Logs do container do Prometheus:
+
+~~~~bash
+ts=2022-11-27T00:19:06.359Z caller=query_logger.go:91 level=error component=activeQueryTracker msg="Error opening query log file" file=/prometheus/queries.active err="open /prometheus/queries.active: permission denied"
+panic: Unable to create mmap-ed active query log
+
+goroutine 1 [running]:
+github.com/prometheus/prometheus/promql.NewActiveQueryTracker({0x7ffcd2558ef7, 0xb}, 0x14, {0x3b92b80, 0xc0001814a0})
+        /app/promql/query_logger.go:121 +0x3cd
+main.main()
+        /app/cmd/prometheus/main.go:618 +0x6973
+~~~~
+
+
+
+
+- Logs do Container do Grafana:
+
+~~~~bash
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+~~~~
+
+
+
+user: "1000:1000"
