@@ -376,3 +376,29 @@ nemsei90
 [11:28] Isso é rápido, vamos no painel à esquerda, no símbolo da engrenagem, em “Configuration > Data sources”. O que é um data source? É uma origem de dados do Grafana. Ele pode ter diversos data sources, pode ser o Splunk, pode ser o CloudWatch, pode ser o Prometheus etc.
 
 [11:51] Vamos adicionar no “Data sources”, o primeiro da lista já é o Prometheus. Vou selecioná-lo, o “Name” está “Prometheus”, vou colocar que ele está em “http://prometheus-forum-api:9090” TCP.
+
+
+- Clicar na engrenagem, configuration, Data Source
+Add Data Source
+
+http://prometheus-forum-api:9090
+
+
+[12:13] Esse é o endereço porque ele vai falar com o contêiner. Se você colocar “localhost”, o Grafana vai achar que ele é o próprio endpoint de métricas do Prometheus, e não é.
+
+[12:26] Aqui você não mexe em mais nenhuma opção, vem e roda um “Save & test”. Se estiver certo, se você conseguir falar com esse endpoint, ele vai ter um resultado igual ao meu e vai estar configurado.
+
+
+[12:41] Está certo aqui. Se eu procurar em “Data sources”, vou ver que já tenho o Prometheus configurado. A outra configuração rápida que vamos fazer é, no painel à esquerda, no símbolo do “+”. Vamos entrar em “Folder”.
+
+[12:59] Vamos criar uma pasta e toda a nossa configuração de dashboard vai ficar nessa pasta. O nome da pasta vai ser “forum-api”, vou criar a pasta e posso criar o meu dashboard dentro dessa pasta.
+
+nova pasta
+forum-api
+
+[13:18] Vou em “Create dashboard > Dashboard settings” e no nome do dashboard vou colocar “dash-forum-api”. Não vou colocar descrição, nada disso. Vou dar um “save”, vou salvar com as tags e pronto, está feito.
+
+[13:45] Essa é a subida do Grafana e a configuração mais básica, que é a seleção de um data source e a criação de uma pasta em que o nosso dash será configurado.
+
+[13:57] Na próxima aula, vamos trabalhar com as variáveis que vamos utilizar no Grafana. É isso, te vejo na próxima aula.
+
