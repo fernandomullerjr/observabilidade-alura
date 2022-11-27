@@ -237,3 +237,8 @@ HikariPool-1
 [06:12] Ela não é referenciada por outra variável, é por isso que esse aviso fica feito aqui. Vou salvar o dashboard com essa mudança e vou colocar “variáveis”.
 
 [06:24] Está salvo, vamos voltar. Já temos aqui “application”, “instance” e “pool” de conexões que vamos utilizar. Agora, vamos ao canto direito superior, clicar em "Add Panel" e adicionar uma nova linha, uma “New row”.
+
+
+"Add Panel" 
+e adicionar uma nova linha, uma 
+“New row”.
