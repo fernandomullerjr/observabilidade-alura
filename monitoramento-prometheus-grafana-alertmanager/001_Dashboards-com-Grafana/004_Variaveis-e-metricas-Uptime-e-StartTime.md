@@ -226,7 +226,13 @@ pool
 
 [05:21] O tipo é consulta (Query) e aqui é a métrica que vamos usar para buscar essa variável. A métrica que vamos usar – deixa eu configurar o label_values(hikaricp_connections{instance="$instance", application="$application"}, pool), essa é a métrica, com os labels instance e application.
 
+label_values(hikaricp_connections{instance="$instance", application="$application"}, pool)
+
+
 [05:50] Ela vai pegar o valor do pool de conexões, esse é o pool da JDBC, é o hikari pool cp. Automaticamente, já aparece aqui “HikariPool-1”. Então, estão configuradas as nossas variáveis, vou dar um “Update”.
+
+Preview of values
+HikariPool-1
 
 [06:12] Ela não é referenciada por outra variável, é por isso que esse aviso fica feito aqui. Vou salvar o dashboard com essa mudança e vou colocar “variáveis”.
 
