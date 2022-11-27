@@ -232,4 +232,147 @@ fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertma
 
 
 
+
+- Adicionando no Docker-compose, no bloco sobre Prometheus:
 user: "1000:1000"
+
+- Subindo o Container novamente.
+docker-compose up -d
+
+~~~~bash
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ docker-compose up -d
+redis-forum-api is up-to-date
+mysql-forum-api is up-to-date
+app-forum-api is up-to-date
+proxy-forum-api is up-to-date
+Recreating prometheus-forum-api ... done
+grafana-forum-api is up-to-date
+client-forum-api is up-to-date
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS                         PORTS                                       NAMES
+d85b6b30bb3e   prom/prometheus:latest   "/bin/prometheus --c…"   4 seconds ago    Up 3 seconds                   0.0.0.0:9090->9090/tcp, :::9090->9090/tcp   prometheus-forum-api
+8b9c0c16991f   client-forum-api         "/scripts/client.sh"     10 minutes ago   Up 10 minutes                                                              client-forum-api
+78bfcfa2b1e8   grafana/grafana          "/run.sh"                10 minutes ago   Restarting (1) 5 seconds ago                                               grafana-forum-api
+8a762187b11b   nginx                    "/docker-entrypoint.…"   10 minutes ago   Up 10 minutes                  0.0.0.0:80->80/tcp, :::80->80/tcp           proxy-forum-api
+0bbea937c7c7   app-forum-api            "java -Xms128M -Xmx1…"   10 minutes ago   Up 10 minutes (unhealthy)                                                  app-forum-api
+c9801db3a140   mysql:5.7                "docker-entrypoint.s…"   10 minutes ago   Up 10 minutes                                                              mysql-forum-api
+bced4d709071   redis                    "docker-entrypoint.s…"   10 minutes ago   Up 10 minutes                                                              redis-forum-api
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+~~~~
+
+
+- Normalizou o container do Prometheus.
+- Pendente, ajustar o container do Grafana.
+
+
+- Adicionando no Docker-compose, no bloco sobre Grafana:
+user: "1000:1000"
+
+~~~~bash
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ docker-compose up -d
+redis-forum-api is up-to-date
+mysql-forum-api is up-to-date
+app-forum-api is up-to-date
+proxy-forum-api is up-to-date
+prometheus-forum-api is up-to-date
+Recreating grafana-forum-api ... done
+client-forum-api is up-to-date
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED              STATUS                      PORTS                                       NAMES
+9afa77196842   grafana/grafana          "/run.sh"                2 seconds ago        Up Less than a second       0.0.0.0:3000->3000/tcp, :::3000->3000/tcp   grafana-forum-api
+d85b6b30bb3e   prom/prometheus:latest   "/bin/prometheus --c…"   About a minute ago   Up About a minute           0.0.0.0:9090->9090/tcp, :::9090->9090/tcp   prometheus-forum-api
+8b9c0c16991f   client-forum-api         "/scripts/client.sh"     11 minutes ago       Up 11 minutes                                                           client-forum-api
+8a762187b11b   nginx                    "/docker-entrypoint.…"   11 minutes ago       Up 11 minutes               0.0.0.0:80->80/tcp, :::80->80/tcp           proxy-forum-api
+0bbea937c7c7   app-forum-api            "java -Xms128M -Xmx1…"   11 minutes ago       Up 11 minutes (unhealthy)                                               app-forum-api
+c9801db3a140   mysql:5.7                "docker-entrypoint.s…"   11 minutes ago       Up 11 minutes                                                           mysql-forum-api
+bced4d709071   redis                    "docker-entrypoint.s…"   11 minutes ago       Up 11 minutes                                                           redis-forum-api
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+
+
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS                         PORTS                                       NAMES
+9afa77196842   grafana/grafana          "/run.sh"                33 seconds ago   Restarting (1) 2 seconds ago                                               grafana-forum-api
+d85b6b30bb3e   prom/prometheus:latest   "/bin/prometheus --c…"   2 minutes ago    Up 2 minutes                   0.0.0.0:9090->9090/tcp, :::9090->9090/tcp   prometheus-forum-api
+8b9c0c16991f   client-forum-api         "/scripts/client.sh"     12 minutes ago   Up 12 minutes                                                              client-forum-api
+8a762187b11b   nginx                    "/docker-entrypoint.…"   12 minutes ago   Up 12 minutes                  0.0.0.0:80->80/tcp, :::80->80/tcp           proxy-forum-api
+0bbea937c7c7   app-forum-api            "java -Xms128M -Xmx1…"   12 minutes ago   Up 12 minutes (unhealthy)                                                  app-forum-api
+c9801db3a140   mysql:5.7                "docker-entrypoint.s…"   12 minutes ago   Up 12 minutes                                                              mysql-forum-api
+bced4d709071   redis                    "docker-entrypoint.s…"   12 minutes ago   Up 12 minutes                                                              redis-forum-api
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+
+Segue com erro
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ docker logs grafana-forum-api
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+GF_PATHS_DATA='/var/lib/grafana' is not writable.
+You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
+mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+
+~~~~
+
+
+
+
+
+
+
+- Foi necessário ajustar as permissões:
+  524  sudo chmod 777 -R grafana/
+  525  sudo chmod 777 -R Grafana/
+
+
+
+
+logger=sqlstore.transactions t=2022-11-27T00:26:40.527233555Z level=info msg="Database locked, sleeping then retrying" error="database is locked" retry=0
+logger=sqlstore.transactions t=2022-11-27T00:26:40.545066365Z level=info msg="Database locked, sleeping then retrying" error="database is locked" retry=1
+
+
+
+
+- Grafana acessível:
+http://192.168.0.113:3000
+<http://192.168.0.113:3000>
+
+
+- Usuário e senha padrão
+admin
+admin
+
+definida nova senha:
+nemsei90
+
+
+
+
+
+
+[11:14] Vou salvar e pronto, autenticamos no Grafana. Essa é a interface do Grafana. A primeira coisa que vamos fazer agora que o Grafana subiu é configurar um data source.
+
+[11:28] Isso é rápido, vamos no painel à esquerda, no símbolo da engrenagem, em “Configuration > Data sources”. O que é um data source? É uma origem de dados do Grafana. Ele pode ter diversos data sources, pode ser o Splunk, pode ser o CloudWatch, pode ser o Prometheus etc.
+
+[11:51] Vamos adicionar no “Data sources”, o primeiro da lista já é o Prometheus. Vou selecioná-lo, o “Name” está “Prometheus”, vou colocar que ele está em “http://prometheus-forum-api:9090” TCP.

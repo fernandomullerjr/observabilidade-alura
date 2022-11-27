@@ -97,6 +97,7 @@ services:
 
   grafana-forum-api:
     image: grafana/grafana
+    user: "1000:1000"
     container_name: grafana-forum-api
     volumes:
       - ./grafana:/var/lib/grafana

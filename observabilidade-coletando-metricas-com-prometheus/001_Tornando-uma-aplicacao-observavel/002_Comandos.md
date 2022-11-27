@@ -83,3 +83,13 @@ for i in "${array[@]}" ; do date -d $i ; done
 
 - Curso2 - diretório:
 cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+
+
+- Grafana precisa de ajuste nas permissões:
+sudo chmod 777 -R grafana/
+sudo chmod 777 -R Grafana/
+
+
+- Grafana acessível:
+http://192.168.0.113:3000
+<http://192.168.0.113:3000>
