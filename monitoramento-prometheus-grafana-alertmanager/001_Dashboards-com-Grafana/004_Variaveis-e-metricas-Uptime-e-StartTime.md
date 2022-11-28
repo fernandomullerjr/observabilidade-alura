@@ -242,3 +242,127 @@ HikariPool-1
 "Add Panel" 
 e adicionar uma nova linha, uma 
 “New row”.
+
+
+
+
+
+[06:40] Clicarei em "Row Title". Vou chamar a linha de “API BASIC”. É dentro dessa row que vamos criar os painéis desse capítulo 3. Vamos começar já criando um painel bem simples que, basicamente, vai ser uma métrica que traz para nós o uptime da nossa API.
+
+[07:08] Na verdade, ela traz o uptime do processo. No painel inferior, em "metrics browser", vou rodar process_uptime_seconds. Se olharmos aqui, ele vai trazer um dado para nós que não parece muito interessante, mas vamos formatar isso.
+
+[07:28] Eu vou trabalhar com o label application. Quem é o application? Eu posso preencher direto aqui, mas é legal trabalharmos com as nossas variáveis.
+
+[07:40] Porque, se em algum momento eu tiver outro application que essa métrica possa ser utilizada, a variável vai ter mais de um valor, é só fazer um ajuste nela e conseguimos trabalhar com ela como se ela fosse um vetor, conseguimos pegar diversos índices.
+
+[08:00] Vai ter o application e o instance. Poderia colocar outro label que é muito importante, que é o job. Esse eu acabei não criando variável, app-forum-api, esse é o job. Fica process_uptime_seconds{application="$application",instance="$instance",job="app-forum-api"}.
+
+
+process_uptime_seconds{application="$application",instance="$instance",job="app-forum-api"}
+
+
+
+
+
+
+[08:20] Já temos essa métrica. Na legenda, não tem o que colocar, vamos entender. Sob "Panel Title", tenho o painel em que a métrica vai ser exibida para mim. No painel abaixo, eu tenho o data source e as opções de query – inclusive, posso inspecionar a minha query.
+
+[08:41] Ainda no painel inferior, tenho o browser de métricas que eu coloco a minha métrica e ela vai gerar o painel aqui, a informação que vai ser exibida no painel. Mais abaixo, posso colocar uma legenda, o formato que estou utilizando, e tenho outras opções, como o “Min step”, “Resolution”, enfim, não vamos lidar com essas configurações agora.
+
+[09:08] O que importa para nós é configurar, do lado direito superior, qual é o tipo de visualização. Temos diversos tipos de visualizações. Para essa, vamos utilizar o “Stat”. Ele já trouxe um número interessante para nós. Vou chamar, no campo para título que apareceu à direita, de “UPTIME” e vou colocar como descrição “API uptime”.
+
+[09:35] Essa é a descrição. Quando coloco uma descrição, quando alguém colocar o mouse sobre o painel, ele vai ver a descrição. Agora, vamos trabalhar aqui.
+
+[09:47] Descendo em “Opções de valores”, temos a forma de cálculo do valor que vai ser exibido. Vamos pegar o último valor não nulo, é esse “Last” e o tipo de campo é “Numérico”.
+
+[10:03] Aqui, temos o modo de coloração. Se eu colocar em “None”, ele vai ficar sem cor; em “Value”, ele colore o valor; e em “Background”, é o fundo. Vou manter em “Value”.
+
+[10:15] “Graph mode” é essa colação de métrica que fica aqui, eu não vou utilizar, eu quero só o número. Em "Text Size", tamanho de texto, eu não vou mexer para não alterar essa configuração.
+
+
+Last *
+Last non-null value
+
+último valor não-nulo
+
+
+
+
+
+
+
+
+
+
+[10:31] Nas opções padrões, nas “Standard options”, temos o tipo de unidade. A unidade para esse valor é “Time” e, nesse caso, uma medida de uptime que eu acho interessante que se parece muito quando você está olhando o uptime, por exemplo, de um sistema operacional, é a duração em hora, minuto e segundo.
+
+Standard Options
+Unit
+    Time
+    Duration (hh:mm:ss)
+
+
+[10:54] Está aqui, a aplicação está de pé há 4 horas, 46 minutos e 15 segundos. Descendo, temos o “Threshold” que não vai ser utilizado, vou colocar essa métrica em cor azul.
+
+[11:12] Está feito, está aqui o “UPTIME”, vou arrastá-lo para dentro da “API BASIC”. Já temos o primeiro painel com o uptime da aplicação, vamos criar outro.
+
+[11:27] Esse agora que vamos criar ele vai utilizar a métrica process_start_time_seconds. Vamos pegar o momento que o processo foi "startado". Temos o uptime da nossa API, mas temos o start time de processo que pode mudar se "restartarmos" a nossa aplicação.
+
+[11:55] Isso não vai influenciar no uptime, são dois valores distintos. Vamos trabalhar com os labels process start_time_seconds{application=”$application”, instance=”$instance”, job=”app-forum-api”}.
+
+
+process_start_time_seconds{application="$application", instance="$instance", job="app-forum-api"}
+
+Nome do Painel:
+    START TIME
+Descrição do painel:
+    Hora da inicialização da API
+
+Graph mode:
+    None
+
+Standard options
+Unit
+    Datetime local
+    20/01/1970 04:46:30
+
+Ficou ruim a data
+Trocando para:
+
+Standard options
+Unit
+    Datetime ISO
+    1970-01-20 
+    04:46:30
+
+- Observação:
+veio com estes valores estranhos, 1970, etc, pois é um Unix Timestamp!
+veio com estes valores estranhos, 1970, etc, pois é um Unix Timestamp!
+veio com estes valores estranhos, 1970, etc, pois é um Unix Timestamp!
+
+
+process_start_time_seconds{application="$application", instance="$instance", job="app-forum-api"}
+
+
+
+[14:25] Vou acabar colocando o default, o “Datetime ISO”. Aqui, em “Threshold”, vou retirar, vou colocar uma cor azul. Ele está aqui “1970-01-19” porque é o Unix timestamp. Vou multiplicar por 1000 (* 1000) e acabo com esse problema.
+
+process_start_time_seconds{application="$application", instance="$instance", job="app-forum-api"} * 1000
+
+- Ajustado, métrica vem assim agora:
+20:00:45
+
+
+- Removendo o Threshold vermelho.
+- Colocando o valor base em azul.
+
+
+[14:58] Inclusive, sumiu tudo. Fazendo essa conversão, está aqui, só não está no fuso adequado. Vou tirar do “ISO”, vou colocar o “Datetime local”, e ainda está incorreto, não era para ele estar trazendo esse horário, tem alguma coisa de questão de horário do meu contêiner que está incorreta.
+
+[15:24] Não vou me preocupar com isso agora, depois isso vai ser corrigido quando eu subir a stack novamente. Não vou investigar isso agora para não perdermos tempo, o que importa é que o “Start time” está aqui, também vou arrastar para "API BASIC".
+
+[15:37] Na verdade, está certo o “Start time”, está completamente certo, foi a hora que eu subi a minha API, eu subi às 05:48 da tarde mesmo, não tem nada errado, está correto.
+
+[15:50] Aqui, já temos dois painéis configurados, estamos trabalhando com variáveis e abrimos caminho para a próxima aula que vamos estar trabalhando com uma métrica de usuários autenticados e erros de autenticação.
+
+[16:07] Te vejo na próxima aula.
