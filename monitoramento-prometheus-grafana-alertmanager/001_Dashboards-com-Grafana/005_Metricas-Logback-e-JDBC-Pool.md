@@ -23,7 +23,8 @@ git status
 #  05 Métricas Logback e JDBC Pool
 
 
-Transcrição
+# Transcrição
+
 [00:00] Vamos dar sequência ao nosso conteúdo. Nessa aula, vamos começar a trabalhar com uma métrica que diz respeito aos níveis de log que estão sendo refletidos nos eventos da nossa aplicação.
 
 [00:18] No Grafana, no canto direito superior, vamos adicionar um painel. A métrica que vamos olhar aqui é a logback_events_total. Vamos colocar alguns labels, os labels que vou utilizar são: {application=”$application”, instance=“$instance”, job=”app-forum-api”}.
@@ -111,3 +112,26 @@ Gráfico de *warns* (em amarelo) e *erros* (em vermelho). O eixo x apresenta o t
 
 
 
+[00:00] Vamos dar sequência ao nosso conteúdo. Nessa aula, vamos começar a trabalhar com uma métrica que diz respeito aos níveis de log que estão sendo refletidos nos eventos da nossa aplicação.
+
+[00:18] No Grafana, no canto direito superior, vamos adicionar um painel. A métrica que vamos olhar aqui é a logback_events_total. Vamos colocar alguns labels, os labels que vou utilizar são: {application=”$application”, instance=“$instance”, job=”app-forum-api”}.
+
+[01:12] Eu tenho aqui o logback_events_total e ele vai trazer diversas séries temporais, é um instant vector e traz diversas séries temporais, não somente uma. E onde entra a distinção entre uma série temporal e outra?
+
+[01:29] É o level, é o log level. Se formos olhar no "localhost/metrics", “Ctrl + F”, “level”, vocês vão ver que tem o info, trace, warn, error e debug. Aqui também conseguimos ver essa informação.
+
+[01:52] Então, quais são os eventos que são interessantes para olharmos aqui? Na minha opinião, warn e error. Vamos começar pelo warn. Vou colocar mais um label, level="warn". No momento, eu tenho 90 warns, só que estou olhando uma série temporal inteira não é isso que eu quero.
+
+[02:14] Como vou olhar para o log, quero olhar os últimos cinco minutos para eu ter um nível de informação interessante. Vou trabalhar novamente com a função increase, vou pegar os [5m]. increase(logback_events_total{application=”$application”, instance=“$instance”, job=”app-forum-api,level="warn”}[5m]), nos últimos cinco minutos, tive 0 informação.
+
+[02:35] Aqui, posso trabalhar com sum para fazer uma agregação dos valores que vou ter nesses cinco minutos. O que vou colocar em “Legend” e “Format”? Não vamos mais trabalhar com “Stat”.
+
+[02:52] Na legenda, posso colocar qualquer string, posso colocar "warn", aí vai mudar aqui, está vendo? No painel, embaixo tem um "warn" que eu coloquei na legenda. Só que eu posso fazer uma passagem de label por referência, o que é mais legal.
+
+[03:12] Posso passar o label {{level}}. Esse {{level}} tem que ser passado entre chaves duplas, como se fosse uma passagem de variável por referência. Ele não refletiu para mim, vou ver se coloquei alguma coisa diferente no meu {{level}}.
+
+- Code:
+sum(increase(logback_events_total{application="$application", instance="$instance", job="app-forum-api", level="warn"}[5m]))
+
+- Legend:
+{{level}}
