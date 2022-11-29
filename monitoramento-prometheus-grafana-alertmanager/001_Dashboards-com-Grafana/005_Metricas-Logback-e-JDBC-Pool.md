@@ -131,7 +131,7 @@ Gráfico de *warns* (em amarelo) e *erros* (em vermelho). O eixo x apresenta o t
 [03:12] Posso passar o label {{level}}. Esse {{level}} tem que ser passado entre chaves duplas, como se fosse uma passagem de variável por referência. Ele não refletiu para mim, vou ver se coloquei alguma coisa diferente no meu {{level}}.
 
 - Code:
-sum(increase(logback_events_total{application="$application", instance="$instance", job="app-forum-api", level="warn"}[5m]))
+increase(logback_events_total{application="$application", instance="$instance", job="app-forum-api", level="warn"}[5m])
 
 - Legend:
 {{level}}
@@ -188,3 +188,36 @@ Mode
     Values
     Select values or calculations to show in legend
     Min, Max, Mean, Last *, Total
+
+
+
+- Definir a opacidade em:
+    Fill opacity
+    Coloquei 10
+
+- No "Gradient Mode", colocar "Opacity" também.
+
+- Em 'Show points", marcar a opção "Never".
+
+
+
+
+
+
+
+- Colocando a agregação do sum agora:
+
+- Code:
+
+sum(increase(logback_events_total{application="$application", instance="$instance", job="app-forum-api", level="error"}[5m]))
+
+sum(increase(logback_events_total{application="$application", instance="$instance", job="app-forum-api", level="warn"}[5m]))
+
+
+- Legend:
+{{level}}
+
+
+
+- Observação:
+Quando utilizada a agregação do sum, é perdido o valor da variável level(warn, error, etc) na legenda do painel.
