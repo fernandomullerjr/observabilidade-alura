@@ -266,11 +266,33 @@ Quando utilizada a agregação do sum, é perdido o valor da variável level(war
 
 [12:22] Vamos trabalhar novamente com o “Stat” nesse caso. Ele está batendo que está em “0” o pool de conexões, é lógico, nós derrubamos a base de dados. O título, vou colocar como “JDBC POOL”.
 
+- Métrica:
+    hikaricp_connections{application="$application", instance="$instance", job="app-forum-api", pool="$pool"}
+
+
+- Tipo do gráfico:
+    Stat
+
+- Nome do painel:
+    JDBC POOL
+
+- Unidade de medida:
+    Misc Short
+
+
+- Em Thresholds, mudar a cor da base para Vermelho.
+- Para o valor 10 no Threshold, colocar a cor verde, pois 10 é o valor padrão do Pool do JDBC.
+
+
 [12:41] Para a descrição, vou colocar “Pool de conexões JDBC”. Vamos trabalhar com o último valor; o campo é numérico; vou tirar a coloração gráfica dele; na “unidade”, vamos trabalhar com “Short”; não tenho número decimal, nem vou me atrever a colocar, porque não estamos trabalhando com time range, então não é necessário.
 
 [13:15] O “Base” vai ficar em vermelho e o normal em verde. Vou colocar o número default do pool do JDBC que é “10”, em verde. Está feito, vamos voltar e vamos fazer um teste rápido.
 
 [13:36] Está aqui o pool, vamos subir o MySQL agora. Vamos colocar um docker container start mysql-forum-api. Subiu. No canto direito superior, vamos atualizar – deixa só ele fazer um scrape para vermos o valor mudando aqui.
+
+
+- Subindo o container do MYSQL, para validar os valores nas métricas:
+docker container start mysql-forum-api
 
 [14:05] Está aí, “JDCB POOL: 10”, o pool de conexões já foi restabelecido. Vamos ver aqui que os logs relacionados a error e a warn vão começar a diminuir drasticamente, vai começar a ter usuário logado e vai começar a ter erro de autenticação, porque é o usuário errando a senha.
 

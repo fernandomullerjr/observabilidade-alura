@@ -93,3 +93,8 @@ sudo chmod 777 -R Grafana/
 - Grafana acessível:
 http://192.168.0.113:3000
 <http://192.168.0.113:3000>
+
+
+- Simulando erros no JDBC:
+docker container stop mysql-forum-api
+docker container start mysql-forum-api
