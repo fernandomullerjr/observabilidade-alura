@@ -135,3 +135,56 @@ sum(increase(logback_events_total{application="$application", instance="$instanc
 
 - Legend:
 {{level}}
+
+
+- Panel options
+Title
+    WARN & ERROR LOG
+Description
+    Warnings e erros logados nos últimos 5 minutos
+
+
+
+- Clicar no "+query", para adicionar uma outra métrica.
+- Colocar esta métrica, com o level error, ao invés de warn, para diferenciar:
+    increase(logback_events_total{application="$application", instance="$instance", job="app-forum-api", level="error"}[5m])
+
+- Legend:
+{{level}}
+
+
+
+
+
+[03:36] É por causa da agregação. Se eu tirar o sum, ele coloca o level para mim. Realmente acho que é interessante nós fazermos uma agregação aqui, mas vamos seguir assim, depois nós mudamos.
+
+[03:55] Está aqui, nós já temos os 5 minutos e vamos manter como uma métrica, como um gráfico. O título que vou colocar é “WARN & ERROR LOG”. Na descrição, vou colocar “Warning e erros logados nos últimos 5 minutos”.
+
+[04:40] Já está com título e informação, porém, nós só temos uma métrica e ela está relacionada a warn, eu preciso adicionar mais uma. Você pega o scroll, desce um pouco e você vai ver, no canto inferior esquerdo, que tem um plus e um “Query”, é para adicionar uma consulta a mais nesse painel.
+
+[05:04] Clica nele, ele vai abrir o “B” – antes tínhamos o “A” –, é só copiar e colarmos e mudarmos o level; vou colocar como level="error". Pronto, agora já temos o level="warn" e "error" aqui.
+
+[05:27] Estão os dois aqui, os dois estão zerados, não teve nenhuma alteração. Agora nós voltamos para o lado direito para trabalharmos nesse painel.
+
+[05:40] Antes disso, acho que é interessante agitarmos um pouco as coisas, então vou derrubar o MySQL para vermos essa métrica sendo alimentada, no Terminal,docker container stop mysql-forum-api.
+
+[06:02] Vamos derrubar, pronto, já derrubou o contêiner, e vamos trabalhando aqui. Na “Legenda”, muda um pouco as coisas, nós trabalhamos com “Time Series” aqui, então é um gráfico.
+
+
+docker container stop mysql-forum-api
+
+
+- Mudar o "Legend Mode" para "Table".
+
+- Legend
+Mode
+    Table
+
+
+- O ""Legend Mode" para "Table" faz que os valores da legenda fiquem numa tabela mais fácil de visualizar.
+
+
+- Selecionar os "Values", para exibir diferentes cálculos das métricas:
+    Values
+    Select values or calculations to show in legend
+    Min, Max, Mean, Last *, Total
