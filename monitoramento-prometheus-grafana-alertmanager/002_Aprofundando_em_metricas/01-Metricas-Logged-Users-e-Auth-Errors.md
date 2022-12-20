@@ -259,11 +259,66 @@ The last packet sent successfully to the server was 0 milliseconds ago. The driv
 RUN apk update
 RUN apk upgrade
 RUN apk --no-cache add curl
+RUN apk add busybox-extras
+
+
+git status
+git add .
+git commit -m "Curso monitoramento-prometheus-grafana-alertmanager - Modulo 002 - Aula 01 Métricas Logged Users e Auth Errors- TSHOOT "
+eval $(ssh-agent -s)
+ssh-add /home/fernando/.ssh/chave-debian10-github
+git push
+git status
+
+
+
+
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app$ docker-compose up -d --build
+Building app-forum-api
+
+
+/ $ telnet mysql-forum-api 3306
+J
+5.7.40fkk d*}8NH}EbBmysql_native_passwordxterm-256color^C
+Console escape. Commands are:
+
+ l      go to line mode
+ c      go to character mode
+ z      suspend telnet
+ e      exit telnet
+/ $
+
+
+
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app$ docker network ls
+NETWORK ID     NAME                       DRIVER    SCOPE
+d9b75a5b78b1   bridge                     bridge    local
+2a5bf18701f7   conteudo_01_api            bridge    local
+ded955dd913f   conteudo_01_cache          bridge    local
+e9be77774a1e   conteudo_01_database       bridge    local
+270e555a64cb   conteudo_01_monit          bridge    local
+297584849e73   conteudo_01_proxy          bridge    local
+4ea8eec63a81   host                       host      local
+3ae049e03484   minikube                   bridge    local
+cc85819ababc   none                       null      local
+487fed780399   prometheus-grafana_local   bridge    local
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app$
+
+
+
+
+/home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app/src/main/resources/application-prod.properties
+# datasource
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.url=jdbc:mysql://mysql-forum-api:3306/forum
+spring.datasource.username=forum
+spring.datasource.password=Bk55yc1u0eiqga6e
+
 
 
 
 # PENDENTE
-- Testar comunicação do Container do app com o mysql, instalar curl nele
+- Testar comunicação do Container do app com o mysql, foi instalado o curl e telnet no Container do App. Revisar networks e config do application-prod.
 - Resolver problema, porque o Metrics Browser do Grafana não exibe a métrica auth_user_success_total.
 - Verificar retorno no Fórum e no Discord da Alura.
 - Verificar porque o endpoint do Actuator não tá funcionando:

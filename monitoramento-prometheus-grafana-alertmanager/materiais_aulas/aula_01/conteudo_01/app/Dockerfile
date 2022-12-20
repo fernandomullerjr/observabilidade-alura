@@ -4,6 +4,7 @@ RUN addgroup -S spring && adduser -S spring -G spring
 RUN apk update
 RUN apk upgrade
 RUN apk --no-cache add curl
+RUN apk add busybox-extras
 USER spring:spring
 
 ARG JAR_FILE=target/*jar
