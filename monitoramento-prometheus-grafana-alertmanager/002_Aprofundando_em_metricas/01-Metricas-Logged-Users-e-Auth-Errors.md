@@ -93,6 +93,10 @@ auth_user_success_total
 
 
 
+- Subindo aplicação:
+cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app
+sh start.sh
+
 
 - Criado post na Alura:
 https://cursos.alura.com.br/forum/topico-metricas-logged-users-e-auth-errors-metrics-broser-nao-exibe-auth_user_success_total-262187
@@ -106,3 +110,24 @@ Porém ao digitar ela o Metrics Browser não encontra ela.
 Colocando apenas "user", também não acha nada relacionado.
 
 O que pode estar ocorrendo?
+
+
+
+
+- Métrica não existe na página de métricas do Prometheus:
+auth_user_success_total
+http://192.168.92.129/metrics
+<http://192.168.92.129/metrics>
+
+
+
+# PENDENTE
+- Resolver problema, porque o Metrics Browser do Grafana não exibe a métrica auth_user_success_total.
+- Verificar retorno no Fórum e no Discord da Alura.
+- Verificar porque o endpoint do Actuator não tá funcionando:
+    http://192.168.92.129:8080/actuator
+    necessário subir aplicação, para o Actuator subir
+- Verificar se o Prometheus tá com problema em fazer o Scrape, pois não tem essa métrica na página de métricas do Prometheus:
+    http://192.168.92.129/metrics
+    idéia do professor:
+    https://cursos.alura.com.br/forum/topico-metrica-http_server_requests_seconds_bucket-nao-encontrada-232308
