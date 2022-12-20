@@ -1,0 +1,17 @@
+{
+	"ulid": "01GMR4TSNA38Z7ZGYG79N6W6HK",
+	"minTime": 1671501601940,
+	"maxTime": 1671508800000,
+	"stats": {
+		"numSamples": 273269,
+		"numSeries": 887,
+		"numChunks": 2429
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01GMR4TSNA38Z7ZGYG79N6W6HK"
+		]
+	},
+	"version": 1
+}

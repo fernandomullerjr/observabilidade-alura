@@ -21,27 +21,27 @@ sh start.sh
 
 
 - Acessando:
-192.168.0.113:8080/topicos
-http://192.168.0.113:8080/topicos/1
+192.168.92.129:8080/topicos
+http://192.168.92.129:8080/topicos/1
 
-curl -v http://192.168.0.113:8080/topicos/1
-curl -v http://192.168.0.113:8080/topicos/2
-curl -v http://192.168.0.113:8080/topicos/3
+curl -v http://192.168.92.129:8080/topicos/1
+curl -v http://192.168.92.129:8080/topicos/2
+curl -v http://192.168.92.129:8080/topicos/3
 
 
 
 
 - Agora é possível acessar o Actuator:
-http://192.168.0.113:8080/actuator
+http://192.168.92.129:8080/actuator
 
 - Acessando o Health:
-http://192.168.0.113:8080/actuator/health
+http://192.168.92.129:8080/actuator/health
 
 - Acessando o Info:
-http://192.168.0.113:8080/actuator/info
+http://192.168.92.129:8080/actuator/info
 
 - Acessando as métricas em Metrics:
-http://192.168.0.113:8080/actuator/metrics
+http://192.168.92.129:8080/actuator/metrics
 
 
 
@@ -91,10 +91,42 @@ sudo chmod 777 -R Grafana/
 
 
 - Grafana acessível:
-http://192.168.0.113:3000
-<http://192.168.0.113:3000>
+http://192.168.92.129:3000
+<http://192.168.92.129:3000>
 
 
 - Simulando erros no JDBC:
 docker container stop mysql-forum-api
 docker container start mysql-forum-api
+
+
+
+
+
+
+
+
+
+
+
+
+# NOVO
+
+- Diretório principal:
+cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+
+
+- Subindo stack
+cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+docker-compose up -d
+
+
+- Buildando aplicação e validando se está tudo ok
+
+cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app
+mvn clean package
+
+
+- Subindo aplicação:
+cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app
+sh start.sh

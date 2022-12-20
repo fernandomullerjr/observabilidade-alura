@@ -131,3 +131,147 @@ http://192.168.92.129/metrics
     http://192.168.92.129/metrics
     idéia do professor:
     https://cursos.alura.com.br/forum/topico-metrica-http_server_requests_seconds_bucket-nao-encontrada-232308
+- Revisar a aula:
+    /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/002_Metricas-default-e-personalizadas/002_Metricas-personalizadas.md
+
+
+
+
+
+# #############################################################################################################################################################
+# Dia 20/12/2022
+
+ao Buildar e Subir a aplicação
+
+cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app
+mvn clean package
+
+
+- Subindo aplicação:
+cd /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/prometheus-grafana/app
+sh start.sh
+
+E tentar acessar via 
+http://192.168.92.129:8080/topicos/1
+http://192.168.92.129:8080/topicos/
+
+No navegador surgem os erros:
+Whitelabel Error Page
+
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+Tue Dec 20 13:32:43 BRT 2022
+There was an unexpected error (type=Internal Server Error, status=500).
+
+
+E na console do terminal surgem os erros:
+
+2022-12-20 13:38:25.250  WARN 38987 --- [nio-8080-exec-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08S01
+2022-12-20 13:38:25.250 ERROR 38987 --- [nio-8080-exec-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+2022-12-20 13:38:25.253 ERROR 38987 --- [nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection] with root cause
+
+2022-12-20 13:32:43.574 ERROR 38987 --- [nio-8080-exec-2] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.springframework.data.redis.RedisConnectionFailureException: Unable to connect to Redis; nested exception is io.lettuce.core.RedisConnectionException: Unable to connect to redis-forum-api:6379] with root cause
+
+
+
+
+Verificado que a stack subida era antiga, do curso1
+subindo stack do curso2
+
+E na console do terminal, onde foi subida a aplicação via start.sh, surgem os erros:
+
+2022-12-20 13:53:09.092  WARN 66193 --- [nio-8080-exec-9] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08S01
+2022-12-20 13:53:09.092 ERROR 66193 --- [nio-8080-exec-9] o.h.engine.jdbc.spi.SqlExceptionHelper   : Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+2022-12-20 13:53:09.094 ERROR 66193 --- [nio-8080-exec-9] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection] with root cause
+
+2022-12-20 14:00:31.795  WARN 66193 --- [nio-8080-exec-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08S01
+2022-12-20 14:00:31.795 ERROR 66193 --- [nio-8080-exec-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+2022-12-20 14:00:31.798 ERROR 66193 --- [nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection] with root cause
+
+2022-12-20 14:20:43.339  INFO 123081 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4412 ms
+Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+
+
+2022-12-20 14:21:02.350 ERROR 123081 --- [         task-1] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
+
+com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+
+
+
+- Container do MYSQL acho que não está bindando a porta 3306 a principio:
+
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app$ ss -tulp | grep 3306
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app$
+
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app$ docker ps | grep mysql
+4a0bab2605d6   mysql:5.7                "docker-entrypoint.s…"   44 minutes ago   Up 3 minutes                                                            mysql-forum-api
+fernando@debian10x64:~/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app$
+
+
+
+- Exemplo antigo, que tem a porta bindada:
+
+fernando@debian10x64:~$ docker ps
+CONTAINER ID   IMAGE       COMMAND                  CREATED      STATUS       PORTS                                                  NAMES
+ccdde684f777   mysql:5.7   "docker-entrypoint.s…"   8 days ago   Up 2 hours   0.0.0.0:3306->3306/tcp, :::3306->3306/tcp, 33060/tcp   mysql-forum-api
+e976f206e53f   redis       "docker-entrypoint.s…"   8 days ago   Up 2 hours   0.0.0.0:6379->6379/tcp, :::6379->6379/tcp              redis-forum-api
+fernando@debian10x64:~$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS                             PORTS                               NAMES
+83e10d4ed708   prom/prometheus:latest   "/bin/prometheus --c…"   36 seconds ago   Restarting (2) 1 second ago                                            prometheus-forum-api
+ee9f972a9709   client-forum-api         "/scripts/client.sh"     36 seconds ago   Up 35 seconds                                                          client-forum-api
+64fdc02e7306   nginx                    "/docker-entrypoint.…"   37 seconds ago   Up 36 seconds                      0.0.0.0:80->80/tcp, :::80->80/tcp   proxy-forum-api
+2aa62dd5f35b   app-forum-api            "java -Xms128M -Xmx1…"   38 seconds ago   Up 37 seconds (health: starting)                                       app-forum-api
+05941ffc7974   mysql:5.7                "docker-entrypoint.s…"   39 seconds ago   Up 37 seconds                                                          mysql-forum-api
+2c025f59b117   redis                    "docker-entrypoint.s…"   41 seconds ago   Up 40 seconds                                                          redis-forum-api
+fernando@debian10x64:~$
+
+
+
+- Troquei
+de:
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+para:
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+nos arquivos
+application-prod.properties
+
+- Seguiu com erro:
+
+2022-12-20 14:50:00.236  WARN 47380 --- [nio-8080-exec-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08S01
+2022-12-20 14:50:00.237 ERROR 47380 --- [nio-8080-exec-1] o.h.engine.jdbc.spi.SqlExceptionHelper   : Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+2022-12-20 14:50:00.269 ERROR 47380 --- [nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection] with root cause
+
+
+- Efetuando rollback
+
+
+- Adicionando ao Dockerfile do Container do app
+/home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app/Dockerfile
+RUN apk update
+RUN apk upgrade
+RUN apk --no-cache add curl
+
+
+
+# PENDENTE
+- Testar comunicação do Container do app com o mysql, instalar curl nele
+- Resolver problema, porque o Metrics Browser do Grafana não exibe a métrica auth_user_success_total.
+- Verificar retorno no Fórum e no Discord da Alura.
+- Verificar porque o endpoint do Actuator não tá funcionando:
+    http://192.168.92.129:8080/actuator
+    necessário subir aplicação, para o Actuator subir
+- Verificar se o Prometheus tá com problema em fazer o Scrape, pois não tem essa métrica na página de métricas do Prometheus:
+    http://192.168.92.129/metrics
+    idéia do professor:
+    https://cursos.alura.com.br/forum/topico-metrica-http_server_requests_seconds_bucket-nao-encontrada-232308
+- Revisar a aula:
+    /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/002_Metricas-default-e-personalizadas/002_Metricas-personalizadas.md
