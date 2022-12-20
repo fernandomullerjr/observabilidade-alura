@@ -7,7 +7,7 @@
 
 git status
 git add .
-git commit -m "Curso monitoramento-prometheus-grafana-alertmanager - Modulo 001 - Aula 05 Métricas Logback e JDBC Pool  "
+git commit -m "Curso monitoramento-prometheus-grafana-alertmanager - Modulo 001 - Aula 07  O que aprendemos? "
 eval $(ssh-agent -s)
 ssh-add /home/fernando/.ssh/chave-debian10-github
 git push
