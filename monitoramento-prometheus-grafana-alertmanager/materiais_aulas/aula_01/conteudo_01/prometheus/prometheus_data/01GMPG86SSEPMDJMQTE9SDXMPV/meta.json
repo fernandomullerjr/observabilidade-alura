@@ -1,0 +1,17 @@
+{
+	"ulid": "01GMPG86SSEPMDJMQTE9SDXMPV",
+	"minTime": 1671249601939,
+	"maxTime": 1671256800000,
+	"stats": {
+		"numSamples": 400446,
+		"numSeries": 546,
+		"numChunks": 3337
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01GMPG86SSEPMDJMQTE9SDXMPV"
+		]
+	},
+	"version": 1
+}

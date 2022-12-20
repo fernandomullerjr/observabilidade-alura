@@ -304,3 +304,7 @@ docker container start mysql-forum-api
 
 # CONTINUA EM
 11:01
+
+
+
+date --set="20221219 21:59"
