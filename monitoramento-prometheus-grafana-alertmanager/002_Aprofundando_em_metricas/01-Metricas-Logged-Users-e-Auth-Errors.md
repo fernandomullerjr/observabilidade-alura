@@ -343,3 +343,91 @@ spring.datasource.password=Bk55yc1u0eiqga6e
 The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
 2022-12-25 13:50:59.775 ERROR 69771 --- [nio-8080-exec-5] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection] with root cause
 
+
+
+
+
+
+
+
+
+
+fernando@debian10x64:~$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED      STATUS                    PORTS                                       NAMES
+8f3f8f25614d   app-forum-api            "java -Xms128M -Xmx1…"   4 days ago   Up 59 minutes (healthy)                                               app-forum-api
+944639fff4dc   client-forum-api         "/scripts/client.sh"     4 days ago   Up 59 minutes                                                         client-forum-api
+5321d2036731   grafana/grafana          "/run.sh"                4 days ago   Up 59 minutes             0.0.0.0:3000->3000/tcp, :::3000->3000/tcp   grafana-forum-api
+aae714aa787e   prom/prometheus:latest   "/bin/prometheus --c…"   4 days ago   Up 59 minutes             0.0.0.0:9090->9090/tcp, :::9090->9090/tcp   prometheus-forum-api
+4ce737afcedd   nginx                    "/docker-entrypoint.…"   4 days ago   Up 59 minutes             0.0.0.0:80->80/tcp, :::80->80/tcp           proxy-forum-api
+1f327e29cf39   mysql:5.7                "docker-entrypoint.s…"   4 days ago   Up 59 minutes                                                         mysql-forum-api
+b837c42537de   redis                    "docker-entrypoint.s…"   4 days ago   Up 59 minutes                                                         redis-forum-api
+fernando@debian10x64:~$
+
+
+
+http://192.168.92.129:80/topicos
+http://192.168.92.129:80/topicos/1
+
+
+curl -v http://192.168.92.129:80/topicos
+curl -v http://192.168.92.129:80/topicos/1
+
+fernando@debian10x64:~$ curl -v http://192.168.92.129:80/topicos
+* Expire in 0 ms for 6 (transfer 0x55fc12415fb0)
+*   Trying 192.168.92.129...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x55fc12415fb0)
+* Connected to 192.168.92.129 (192.168.92.129) port 80 (#0)
+> GET /topicos HTTP/1.1
+> Host: 192.168.92.129
+> User-Agent: curl/7.64.0
+> Accept: */*
+>
+< HTTP/1.1 200
+< Server: nginx
+< Date: Sun, 25 Dec 2022 17:04:40 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1; mode=block
+< Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+< Pragma: no-cache
+< Expires: 0
+< X-Frame-Options: DENY
+<
+* Connection #0 to host 192.168.92.129 left intact
+{"content":[{"id":3,"titulo":"Duvida 3","mensagem":"Tag HTML","dataCriacao":"2019-05-05T20:00:00"},{"id":2,"titulo":"Duvida 2","mensagem":"Projeto nao compila","dataCriacao":"2019-05-05T19:00:00"},{"id":1,"titulo":"Duvida 1","mensagem":"Erro ao criar projeto","dataCriacao":"2019-05-05T18:00:00"}],"pageable":{"sort":{"unsorted":false,"sorted":true,"empty":false},"pageNumber":0,"pageSize":10,"offset":0,"paged":true,"unpaged":false},"last":true,"totalPages":1,"totalElements":3,"sort":{"unsorted":false,"sorted":true,"empty":false},"first":true,"numberOfElements":3,"size":10,"number":0,"empty":false}fernando@debian10x64:~$ curl -v http://192.168.92.129:80/topicos/1
+* Expire in 0 ms for 6 (transfer 0x562e76100fb0)
+*   Trying 192.168.92.129...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x562e76100fb0)
+* Connected to 192.168.92.129 (192.168.92.129) port 80 (#0)
+> GET /topicos/1 HTTP/1.1
+> Host: 192.168.92.129
+> User-Agent: curl/7.64.0
+> Accept: */*
+>
+< HTTP/1.1 200
+< Server: nginx
+< Date: Sun, 25 Dec 2022 17:04:40 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1; mode=block
+< Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+< Pragma: no-cache
+< Expires: 0
+< X-Frame-Options: DENY
+<
+* Connection #0 to host 192.168.92.129 left intact
+{"id":1,"titulo":"Duvida 1","mensagem":"Erro ao criar projeto","dataCriacao":"2019-05-05T18:00:00","nomeAutor":"Aluno","status":"NAO_RESPONDIDO","respostas":[]}fernando@debian10x64:~$
+fernando@debian10x64:~$
+
+
+
+- RESOLVIDO
+Problema de não conseguir acessar os endpoints da API foi resolvido.
+Eu estava tentando acessar eles usando a porta 8080, que é usada na parte inicial do curso, quando a aplicação é iniciada via script, ainda não tem um Container.
+Como estou na fase onde a aplicação já tem um Container, verifiquei que esse container usa a porta 80 ao invés da 8080, então só ajustei a porta e consegui acessar os endpoints da minha API de tópicos.
