@@ -612,3 +612,84 @@ auth_user_success_total[1m]
 
 - Necessário usar a função increase:
 increase(auth_user_success_total[1m])
+
+
+
+
+
+[01:46] Vou utilizar o increase porque quero a taxa de crescimento dessa métrica no último minuto, increase(auth_user_success_total[1m]). Você pode se perguntar: “Você vai ter que utilizar o sum para fazer uma agregação?”, não é necessário nesse caso, o valor vai ser o mesmo, porque estou trabalhando apenas com uma série temporal, a partir do momento que uso o increase.
+
+[02:09] Então, eu não preciso fazer uma agregação nesse caso. Está aqui, a visualização que eu vou escolher é “Stat” também. Estou com “9.82”, a taxa de crescimento de autenticação foi essa.
+
+- Passar o tipo do gráfico para:
+Stat
+
+- Este valor vem quebrado, será ajustado para ficar arredondado.
+
+
+[02:28] É um número quebrado, vou arredondar isso. O título que vamos usar é “USERS LOGGED”, “usuários logados”. A descrição é “Usuários logados no último minuto”.
+
+- Trocar o nome do painel para:
+USERS LOGGED
+
+- Descrição:
+Usuários logados no último minuto
+
+
+[02:50] O cálculo vai ser o último valor não nulo. O campo é numérico. A coloraçãom vou tirar o “Graph mode” para ficar só o número. Em “Standard options”, a unidade que vamos utilizar é uma unidade “Short” mesmo.
+
+- Graph mode, Stat panel graph / sparkline mode:
+None
+
+- Standard options, Unit:
+Short
+
+[03:14] Se eu quiser tirar um número decimal, eu posso colocar um valor “0” e ele vai arredondar. Essa métrica é uma aproximação do que temos de usuários autenticados no último minuto.
+
+- Decimals:
+0
+
+
+
+
+
+
+[03:28] Não é o valor exato do cálculo que o Prometheus faz olhando a taxa de crescimento do último minuto porque ele se baseia em uma série temporal, então o dado sempre vai ser um número quebrado, sempre vai ser um float.
+
+[03:46] Não tenho “Threshold” aqui, vou manter um verde mais escuro. Então, já temos um painel com o número de usuários logados no último minuto. Vou formatá-lo, vou diminuir, está muito grande.
+
+[04:09] Assim está mais interessante, pronto. Vamos adicionar mais um painel. Esse painel vai ser uma métrica relacionada aos erros de autenticação, é auth_user_error_total.
+
+- Adicionar novo painel.
+
+- Colocar no Metrics Browser:
+auth_user_error_total
+
+
+[04:23] Temos o mesmo paradigma de antes, eu quero pegar o meu último minuto e vou trabalhar com a minha taxa de crescimento, vai ser increase para [1m] e vamos seguir com o mesmo trabalho que fizemos na métrica anterior.
+
+
+- Necessário usar a função increase:
+increase(auth_user_error_total[1m])
+
+[04:47] Vai ser uma visualização “Stat”, o título do painel vou colocar como “AUTH ERRORS”, vou colocar como “Erros de autenticação no último minuto”, essa é a descrição. Quando alguém posicionar o mouse sobre a métrica, você vai ver a descrição, então é legal para alguém recém-chegado, que não entende a composição do dash, para se encontrar.
+
+- Nome do Painel:
+AUTH ERRORS
+
+- Descrição:
+Erros de autenticação no último minuto
+
+
+
+[05:19] O cálculo vai ser em cima do último valor não nulo; vou tirar a coloração gráfica para manter só o número; na unidade, vou trabalhar também com o “Short” – se eu colocar “None”, ele não muda nada, com valor de “String”, ele iria colocar todo o número completo, o que não é interessante, então vamos manter o “Short”.
+
+[05:52] Vou tirar a casa decimal e aqui, sim, vou colocar um “Threshold”. Vamos imaginar que, em 1 minuto, se tivermos 50 erros de autenticação, teremos um problema. Como não vamos simular 50 erros de autenticação em 1 minuto, eu vou colocar aqui que 5 erros de autenticação é uma situação um pouco estranha.
+
+[06:26] Vou abrir de novo o “Threshold”. E que 10 erros de autenticação já significa que talvez exista um problema no nosso database, porque a aplicação tem uma regra de negócio que vai validar o que o usuário enviou com os dados que estão no database, então ela vai fazer uma consulta para devolver um token para esse usuário.
+
+[06:52] Vou deixar o “Threshold” dessa forma e está feito. Agora, já temos quatro painéis, são bem simples. deixa só eu dar uma reforçada nessa cor verde e trabalhar com um verde mais escuro.
+
+[07:12] Até dado momento, está tudo tranquilo, já vamos começar a trabalhar com algumas coisas mais complexas, mas, por hora, vamos seguindo dessa maneira.
+
+[07:22] Na próxima aula, já vamos trabalhar com dois outros painéis: um que reflete as informações de log, o log level, e outro que vai olhar para o pool de conexões da JDBC. Nos vemos na próxima aula.
