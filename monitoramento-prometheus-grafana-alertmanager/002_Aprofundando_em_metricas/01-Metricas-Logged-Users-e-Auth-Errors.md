@@ -674,17 +674,32 @@ increase(auth_user_error_total[1m])
 
 [04:47] Vai ser uma visualização “Stat”, o título do painel vou colocar como “AUTH ERRORS”, vou colocar como “Erros de autenticação no último minuto”, essa é a descrição. Quando alguém posicionar o mouse sobre a métrica, você vai ver a descrição, então é legal para alguém recém-chegado, que não entende a composição do dash, para se encontrar.
 
+- Painel do tipo:
+Stat
+
 - Nome do Painel:
 AUTH ERRORS
 
 - Descrição:
 Erros de autenticação no último minuto
 
+- Graph mode, Stat panel graph / sparkline mode:
+None
 
+- Standard options, Unit:
+Short
+
+- Decimals:
+0
 
 [05:19] O cálculo vai ser em cima do último valor não nulo; vou tirar a coloração gráfica para manter só o número; na unidade, vou trabalhar também com o “Short” – se eu colocar “None”, ele não muda nada, com valor de “String”, ele iria colocar todo o número completo, o que não é interessante, então vamos manter o “Short”.
 
 [05:52] Vou tirar a casa decimal e aqui, sim, vou colocar um “Threshold”. Vamos imaginar que, em 1 minuto, se tivermos 50 erros de autenticação, teremos um problema. Como não vamos simular 50 erros de autenticação em 1 minuto, eu vou colocar aqui que 5 erros de autenticação é uma situação um pouco estranha.
+
+- “Threshold”:
+colocar em 5 no Laranja, como warning
+para podermos simular erros de autenticação
+e vamos adicionar um valor de 10, para Critical em vermelho
 
 [06:26] Vou abrir de novo o “Threshold”. E que 10 erros de autenticação já significa que talvez exista um problema no nosso database, porque a aplicação tem uma regra de negócio que vai validar o que o usuário enviou com os dados que estão no database, então ela vai fazer uma consulta para devolver um token para esse usuário.
 
