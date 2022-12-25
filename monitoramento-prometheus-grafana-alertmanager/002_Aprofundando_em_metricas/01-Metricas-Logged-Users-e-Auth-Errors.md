@@ -330,3 +330,16 @@ spring.datasource.password=Bk55yc1u0eiqga6e
     https://cursos.alura.com.br/forum/topico-metrica-http_server_requests_seconds_bucket-nao-encontrada-232308
 - Revisar a aula:
     /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/002_Metricas-default-e-personalizadas/002_Metricas-personalizadas.md
+
+
+
+
+# Dia 25/12/2022
+
+
+2022-12-25 13:50:59.766  WARN 69771 --- [nio-8080-exec-5] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08S01
+2022-12-25 13:50:59.767 ERROR 69771 --- [nio-8080-exec-5] o.h.engine.jdbc.spi.SqlExceptionHelper   : Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+2022-12-25 13:50:59.775 ERROR 69771 --- [nio-8080-exec-5] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection] with root cause
+
