@@ -112,21 +112,28 @@ docker container start mysql-forum-api
 
 # NOVO
 
+- Acessando:
+192.168.92.129:80/topicos
+http://192.168.92.129:80/topicos/1
+curl -v http://192.168.92.129:80/topicos/1
+curl -v http://192.168.92.129:80/topicos/2
+curl -v http://192.168.92.129:80/topicos/3
+
 - Diretório principal:
 cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
-
 
 - Subindo stack
 cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
 docker-compose up -d
 
-
 - Buildando aplicação e validando se está tudo ok
-
 cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app
 mvn clean package
-
 
 - Subindo aplicação:
 cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app
 sh start.sh
+
+- Grafana acessível:
+http://192.168.92.129:3000
+<http://192.168.92.129:3000>

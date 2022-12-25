@@ -334,7 +334,18 @@ spring.datasource.password=Bk55yc1u0eiqga6e
 
 
 
-# Dia 25/12/2022
+
+
+
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+## Dia 25/12/2022
+
+
+- TSHOOT sobre o porque da métrica "auth_user_success_total" não aparecer no Metrics Browser do Grafana.
+continuando
 
 
 2022-12-25 13:50:59.766  WARN 69771 --- [nio-8080-exec-5] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08S01
@@ -345,12 +356,7 @@ The last packet sent successfully to the server was 0 milliseconds ago. The driv
 
 
 
-
-
-
-
-
-
+- Containers OK
 
 fernando@debian10x64:~$ docker ps
 CONTAINER ID   IMAGE                    COMMAND                  CREATED      STATUS                    PORTS                                       NAMES
@@ -463,3 +469,146 @@ http://192.168.92.129/metrics
 - No dashboard do Prometheus, ao fazer uma query:
 auth_user_success_total{application="app-forum-api", instance="app-forum-api:8080", job="app-forum-api"}
 	580
+
+
+
+
+
+RESOLVIDO.
+
+
+Meu container do app estava com status  (health: starting):
+
+```
+fernando@debian10x64:~$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS                             PORTS                               NAMES
+83e10d4ed708   prom/prometheus:latest   "/bin/prometheus --c…"   36 seconds ago   Restarting (2) 1 second ago                                            prometheus-forum-api
+ee9f972a9709   client-forum-api         "/scripts/client.sh"     36 seconds ago   Up 35 seconds                                                          client-forum-api
+64fdc02e7306   nginx                    "/docker-entrypoint.…"   37 seconds ago   Up 36 seconds                      0.0.0.0:80->80/tcp, :::80->80/tcp   proxy-forum-api
+2aa62dd5f35b   app-forum-api            "java -Xms128M -Xmx1…"   38 seconds ago   Up 37 seconds (health: starting)                                       app-forum-api
+05941ffc7974   mysql:5.7                "docker-entrypoint.s…"   39 seconds ago   Up 37 seconds                                                          mysql-forum-api
+2c025f59b117   redis                    "docker-entrypoint.s…"   41 seconds ago   Up 40 seconds                                                          redis-forum-api
+fernando@debian10x64:~$
+
+```
+
+
+E eu tinha aqueles problemas para acessar os endpoints da API de tópicos.
+Problema de não conseguir acessar os endpoints da API foi resolvido.
+Eu estava tentando acessar eles usando a porta 8080, que é usada na parte inicial do curso, quando a aplicação é iniciada via script, ainda não tem um Container.
+Como estou na fase onde a aplicação já tem um Container, verifiquei que esse container usa a porta 80 ao invés da 8080, então só ajustei a porta e consegui acessar os endpoints da minha API de tópicos.
+
+Endpoints OK:
+
+```
+
+fernando@debian10x64:~$ curl -v http://192.168.92.129:80/topicos
+* Expire in 0 ms for 6 (transfer 0x55fc12415fb0)
+*   Trying 192.168.92.129...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x55fc12415fb0)
+* Connected to 192.168.92.129 (192.168.92.129) port 80 (#0)
+> GET /topicos HTTP/1.1
+> Host: 192.168.92.129
+> User-Agent: curl/7.64.0
+> Accept: */*
+>
+< HTTP/1.1 200
+< Server: nginx
+< Date: Sun, 25 Dec 2022 17:04:40 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1; mode=block
+< Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+< Pragma: no-cache
+< Expires: 0
+< X-Frame-Options: DENY
+<
+* Connection #0 to host 192.168.92.129 left intact
+{"content":[{"id":3,"titulo":"Duvida 3","mensagem":"Tag HTML","dataCriacao":"2019-05-05T20:00:00"},{"id":2,"titulo":"Duvida 2","mensagem":"Projeto nao compila","dataCriacao":"2019-05-05T19:00:00"},{"id":1,"titulo":"Duvida 1","mensagem":"Erro ao criar projeto","dataCriacao":"2019-05-05T18:00:00"}],"pageable":{"sort":{"unsorted":false,"sorted":true,"empty":false},"pageNumber":0,"pageSize":10,"offset":0,"paged":true,"unpaged":false},"last":true,"totalPages":1,"totalElements":3,"sort":{"unsorted":false,"sorted":true,"empty":false},"first":true,"numberOfElements":3,"size":10,"number":0,"empty":false}fernando@debian10x64:~$ curl -v http://192.168.92.129:80/topicos/1
+* Expire in 0 ms for 6 (transfer 0x562e76100fb0)
+*   Trying 192.168.92.129...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x562e76100fb0)
+* Connected to 192.168.92.129 (192.168.92.129) port 80 (#0)
+> GET /topicos/1 HTTP/1.1
+> Host: 192.168.92.129
+> User-Agent: curl/7.64.0
+> Accept: */*
+>
+< HTTP/1.1 200
+< Server: nginx
+< Date: Sun, 25 Dec 2022 17:04:40 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1; mode=block
+< Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+< Pragma: no-cache
+< Expires: 0
+< X-Frame-Options: DENY
+<
+* Connection #0 to host 192.168.92.129 left intact
+{"id":1,"titulo":"Duvida 1","mensagem":"Erro ao criar projeto","dataCriacao":"2019-05-05T18:00:00","nomeAutor":"Aluno","status":"NAO_RESPONDIDO","respostas":[]}fernando@debian10x64:~$
+fernando@debian10x64:~$
+fernando@debian10x64:~$
+
+```
+
+
+
+Sobre a métrica "auth_user_success_total" que eu não encontrava no Grafana:
+agora que consegui resolver os problemas com os Endpoints da API, acessei eles algumas vezes, consequentemente, gerou métricas de "auth_user_success_total" no meu endpoint de métricas:
+http://192.168.92.129/metrics
+
+Fui verificar no Grafana, quando adiciono um panel e tento buscar pela métrica "auth_user_success_total" no Metrics Browser, agora consigo encontrar ela!
+Tudo certo.
+
+
+
+
+
+
+
+
+
+
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+## Retomando o curso
+
+[00:00] Vamos dar sequência no nosso curso, agora vamos trabalhar criando mais dois painéis.
+
+[00:10] Vamos em “Add panel”. Agora vamos trabalhar com uma métrica que diz respeito ao número de usuários autenticados no último minuto.
+
+[00:25] No campo "metrics browser", vou colocar user, já conseguimos buscar, vai ser auth_user_success_total. No caso, se eu colocar essa métrica aqui, ela já vai me trazer um valor, só que não é o valor que eu quero demonstrar no meu dash, eu quero um painel com números.
+
+[00:48] O que eu preciso aqui? Eu quero olhar para o último minuto, não quero olhar a totalidade, não quero olhar um contador que sempre vai estar sendo incrementado, porque ele não vai refletir a realidade da minha API.
+
+[01:03] Alguns usuários já não vão estar mais logados, então quero pegar somente a autenticação do último minuto para entender quantos usuários estão autenticados naquele minuto.
+
+
+
+
+
+
+[01:15] Para esse caso, é interessante, primeiro, se eu definir o meu range time, eu não vou ter informações sendo plotadas aqui. Por quê? Porque eu preciso de um dado Scalar ou de um instant vector.
+
+[01:31] Quando eu trabalho com um tempo especificado na minha consulta, eu formo um range vector e um range vector não tem como formar um gráfico. Então, eu vou ter que trabalhar com uma função.
+
+- Tentando dessa forma:
+auth_user_success_total[1m]
+
+- Apresenta o erro:
+    bad_data: invalid expression type "range vector" for range query, must be Scalar or instant Vector: details: 
+
+
+[01:46] Vou utilizar o increase porque quero a taxa de crescimento dessa métrica no último minuto, increase(auth_user_success_total[1m]). Você pode se perguntar: “Você vai ter que utilizar o sum para fazer uma agregação?”, não é necessário nesse caso, o valor vai ser o mesmo, porque estou trabalhando apenas com uma série temporal, a partir do momento que uso o increase.
+
+- Necessário usar a função increase:
+increase(auth_user_success_total[1m])

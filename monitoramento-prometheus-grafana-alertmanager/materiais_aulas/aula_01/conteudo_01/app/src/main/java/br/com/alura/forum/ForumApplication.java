@@ -19,7 +19,7 @@ public class ForumApplication {
 		SpringApplication.run(ForumApplication.class, args);
 	}
 	
-	/*For war file artifact
+	/*For war file artifact - Apenas adicionando um comentário aqui
 	 * @Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 		return builder.sources(ForumApplication.class);
