@@ -431,3 +431,35 @@ fernando@debian10x64:~$
 Problema de não conseguir acessar os endpoints da API foi resolvido.
 Eu estava tentando acessar eles usando a porta 8080, que é usada na parte inicial do curso, quando a aplicação é iniciada via script, ainda não tem um Container.
 Como estou na fase onde a aplicação já tem um Container, verifiquei que esse container usa a porta 80 ao invés da 8080, então só ajustei a porta e consegui acessar os endpoints da minha API de tópicos.
+
+
+
+
+
+
+# PENDENTE
+- Testar comunicação do Container do app com o mysql, foi instalado o curl e telnet no Container do App. Revisar networks e config do application-prod.
+- Resolver problema, porque o Metrics Browser do Grafana não exibe a métrica auth_user_success_total.
+- Verificar retorno no Fórum e no Discord da Alura.
+- Verificar porque o endpoint do Actuator não tá funcionando:
+    http://192.168.92.129:8080/actuator
+    necessário subir aplicação, para o Actuator subir
+- Verificar se o Prometheus tá com problema em fazer o Scrape, pois não tem essa métrica na página de métricas do Prometheus:
+    http://192.168.92.129/metrics
+    idéia do professor:
+    https://cursos.alura.com.br/forum/topico-metrica-http_server_requests_seconds_bucket-nao-encontrada-232308
+- Revisar a aula:
+    /home/fernando/cursos/sre-alura/observabilidade-coletando-metricas-com-prometheus/002_Metricas-default-e-personalizadas/002_Metricas-personalizadas.md
+
+
+
+
+
+- Acessei algumas vezes os Endpoints da API de tópicos.
+- Agora temos métricas de "auth_user_success_total" na página:
+http://192.168.92.129/metrics
+<http://192.168.92.129/metrics>
+
+- No dashboard do Prometheus, ao fazer uma query:
+auth_user_success_total{application="app-forum-api", instance="app-forum-api:8080", job="app-forum-api"}
+	580
