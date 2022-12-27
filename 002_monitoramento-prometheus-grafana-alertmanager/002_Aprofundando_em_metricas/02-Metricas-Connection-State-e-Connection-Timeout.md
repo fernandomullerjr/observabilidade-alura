@@ -112,4 +112,83 @@ Gráfico "*Connection state*". O eixo X mostra a passagem do tempo, de minuto em
 
 - Adicionar um painel
 
+- Métrica que traz as conexões ativas:
 hikaricp_connections_active{application="$application", instance="$instance", job="app-forum-api", pool="$pool"}
+
+- Legend:
+active
+
+
+[01:48] Temos a primeira, aqui, vou colocar como legenda "active", esse é o estado ativo. Vou copiar e vamos adicionar uma nova query que, ao invés de olhar para o active, vai olhar para o idle, hikaricp_connections_idle.
+
+[02:17] Então, é idle, já temos as conexões em estado idle, em estado de espera. Vou colocar como "idle" a legenda e vamos adicionar outra query que vai ser o estado pendente, o "pending".
+
+
+- Métrica que traz as conexões ativas:
+hikaricp_connections_idle{application="$application", instance="$instance", job="app-forum-api", pool="$pool"}
+
+- Legend:
+idle
+
+
+- Métrica que traz as conexões ativas:
+hikaricp_connections_pending{application="$application", instance="$instance", job="app-forum-api", pool="$pool"}
+
+- Legend:
+pending
+
+- Tipo do gráfico:
+Time series
+
+- Título do painel:
+CONNECTION STATE
+
+- Descrição:
+Estado das conexões com o database
+
+- Legend mode:
+Table
+
+- Placement:
+Right
+
+- Values
+Select values or calculations to show in legend
+min, max, last *
+
+- Unidade:
+short
+
+- Remover o Threshold vermelho.
+
+[02:40] Todas essas métricas existem na JVM. Já entrou o pending em estado pendente, temos três métricas sendo "plotadas" nesse gráfico, três séries temporais distintas.
+
+[02:58] Vou manter o “Time series”, vou colocar o título como “CONNECTION STATE” e descrição como “Estado das conexões com o database”.
+
+[03:23] Descendo, vou colocar a legenda em um formato tabular. Posso colocá-la do lado direito, fica legal também, vamos fazer uma experiência com isso. Nos valores da legenda, vou colocar o mínimo, o máximo, o último e o total – apesar de o total ser totalmente irrelevante para nós porque ele só vai fazer um contador.
+
+[04:03] Vou até tirar o total para não gerar confusão. Então, mínimo, máximo e último. Aqui, vou trabalhar com a opacidade, vou deixar em 10. Eu gosto dessa configuração, você não precisa fazer assim. Se você achar outro jeito mais interessante, tudo bem, isso é só o layout mesmo, o que é importa é a métrica e o gráfico sendo "plotado".
+
+
+[04:28] Aqui, vou colocar uma opacidade no gradiente; vou tirar os pontos, não gosto dos pontos; não vou trabalhar no “Eixo X” ou “Eixo Y”; a unidade não vai fazer diferença, vou deixar “Short” porque são números inteiros.
+
+[04:54] Não vou trabalhar com “Threshold”, é um gráfico. Está feito esse painel. Ele é bem interessante para nós. Tenho o “CONNECTION STATE” criado, vou descê-lo e diminuí-lo. Está bagunçado, mas já vamos corrigir, vai ficar legal.
+
+Gráfico "*Connection state*". O eixo X mostra a passagem do tempo, de minuto em minuto, o eixo Y apresenta os valores 0, 5 e 10. A linha amarela (que representa "*idle*") é estável no número 10, exceto uma leve queda perto de 23:25. A linha verde ("*active*") está estável em 0, exceto por um leve aumento, também perto de 23:21. A linha azul ("*pending*") permanece no 0 por todo o período mostrado no gráfico.
+
+[05:37] Está o “CONNECTION STATE”, vamos criar mais um painel. Vou adicionar mais um painel e esse painel vai ser o “Connection Timeout”, vai ser o número de conexões que estão em timeout.
+
+[05:56] Vou colocar o hikaricp_connections_timeout_total, essa métrica. Vou trabalhar com {application=”$application”, instance=”$instance”, job=”app-forum-api”.
+
+[06:28] É isso, não tem muito o que fazer aqui, e o pool, não posso me esquecer, que é a nossa variável pool=”$pool”}. Eu tenho essa informação, só que vou trabalhar novamente com um “Stat” aqui.
+
+[06:51] Vou colocar “DB TIMEOUT” como título e, para descrição, “Conexões com o database em timeout”. Você pode colocar uma descrição melhor se você quiser, não tem problema.
+
+[07:24] Aqui, é um contador. Estamos pegando o timeout_total, ele traz o total para nós, isso não é legal, então vamos fazer uma mudança nisso, vou colocar um range time de [1m] e vou trabalhar com o increase.
+
+[07:47] Só para pegar a taxa de crescimento dele por minuto. Vai estar “0” porque não estamos com o timeout em nenhuma conexão. Vamos trabalhar dessa forma.
+
+[08:02] Aqui, em “Color mode”, vou tirar o “Graph”; em “Unidade”, novamente estamos trabalhando com o número inteiro, então não tem o que mudar. Tendo 5 conexões de timeout em um minuto – até menos –, nós podemos considerar que temos um problema.
+
+
+
