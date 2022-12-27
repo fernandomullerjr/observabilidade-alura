@@ -231,4 +231,19 @@ DB CONNECTION TIMEOUT
 
 - Simulando erros no JDBC:
 docker container stop mysql-forum-api
+docker container stop redis-forum-api
+
+- Alterando o Threshold do painel "DB CONNECTION TIMEOUT", pois 2 timeouts já são indicativos de problemas:
+2
+
+
+
+- Subindo devolta:
 docker container start mysql-forum-api
+docker container start redis-forum-api
+
+
+
+- Métricas normalizando!
+- Métricas normalizando!
+- Métricas normalizando!
