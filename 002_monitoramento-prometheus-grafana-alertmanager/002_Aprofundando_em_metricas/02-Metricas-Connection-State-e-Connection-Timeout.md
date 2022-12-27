@@ -124,14 +124,14 @@ active
 [02:17] Então, é idle, já temos as conexões em estado idle, em estado de espera. Vou colocar como "idle" a legenda e vamos adicionar outra query que vai ser o estado pendente, o "pending".
 
 
-- Métrica que traz as conexões ativas:
+- Métrica que traz as conexões idle:
 hikaricp_connections_idle{application="$application", instance="$instance", job="app-forum-api", pool="$pool"}
 
 - Legend:
 idle
 
 
-- Métrica que traz as conexões ativas:
+- Métrica que traz as conexões pending:
 hikaricp_connections_pending{application="$application", instance="$instance", job="app-forum-api", pool="$pool"}
 
 - Legend:
@@ -192,3 +192,43 @@ Gráfico "*Connection state*". O eixo X mostra a passagem do tempo, de minuto em
 
 
 
+
+- Métrica que traz as conexões pending:
+hikaricp_connections_pending{application="$application", instance="$instance", job="app-forum-api", pool="$pool"}
+
+hikaricp_connections_timeout_total{application="$application", instance="$instance", job="app-forum-api", pool="$pool"}
+
+
+- Tipo de gráfico/painel:
+Stat
+
+- Nome do painel:
+DB TIMEOUT
+
+- Descrição:
+Conexões com o database em timeout
+
+- Adicionar uma função increase:
+increase(hikaricp_connections_timeout_total{application="$application", instance="$instance", job="app-forum-api", pool="$pool"}[1m])
+
+- Graph mode:
+None
+
+- Unit:
+short
+pois estamos trabalhando com número inteiro
+
+- Threshold
+em vermelho, colocar 5, que é indicativo de problemas
+
+- Nome do painel, mudar para:
+DB CONNECTION TIMEOUT
+
+
+
+
+
+
+- Simulando erros no JDBC:
+docker container stop mysql-forum-api
+docker container start mysql-forum-api
