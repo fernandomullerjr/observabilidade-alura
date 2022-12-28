@@ -256,7 +256,7 @@ sum(rate(http_server_requests_seconds_count{application="$application", instance
 [09:04] Agora, para essa outra query, o status vai ser 400. 400 já estou tendo alguns nos últimos 5 minutos. Vou adicionar, no lado inferior esquerdo, mais uma consulta e vou colocar o 404.
 
 - Adicionar mais uma Query
-sum(rate(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus", status="404"}[5m])) / sum(rate(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[5m]))
+sum(rate(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus", status="400"}[5m])) / sum(rate(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[5m]))
 
 - Legend:
 400
@@ -272,11 +272,42 @@ sum(rate(http_server_requests_seconds_count{application="$application", instance
 - Titulo do painel:
 ERROR RATE
 
+- Descrição:
+Taxa de erros nos últimos 5 minutos
+
+- Legend Mode:
+Table
+
+- Legend values:
+min
+max
+média
+last *
+Total
+
 [10:19] Agora, vamos trabalhar no layout dessa métrica. Vou colocar opacidade nível 10 – estamos trabalhando com “Time series”, atenção quanto a isso –, vou colocar um gradiente e vou tirar os pontos, “Show points: Never”, não quero exibição de pontos.
+
+- Opacidade:
+10
+
+- Show points: 
+Never
+
+- Tipo de gráfico:
+ Time series
+
 
 [10:44] Descendo, a unidade, em “Standard options”, a unidade que queremos é a “Porcentagem”, vou escolher o “Percent (0-100)”, fica mais interessante. Realmente é dessa forma que estamos, em 0.0250%.
 
 [11:07] Se eu mudar isso e colocar esse outro tipo de porcentagem, “Percent (0.0-1-0)”, ficou melhor, “2.50%”. Vamos seguir assim e ver se esse é o formato que vai nos atender melhor.
+
+- Unidade:
+Percent (0.0-1.0)
+
+- Mudar as cores das legendas:
+vermelho - 500
+laranja - 400
+amarelo - 404
 
 [11:23] O outro está realmente ficando muito desproporcional. Agora, não mais o que mexer aqui, não tem “Threshold”. O que vou fazer é uma alteração: o 500 vou colocar vermelho, o 400 vai ficar laranja, e vou colocar o 404 como amarelo.
 
