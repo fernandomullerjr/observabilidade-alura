@@ -318,3 +318,12 @@ Gráfico "*Error rate*". O eixo X mostra a passagem do tempo, de 30 em 30 segund
 [12:11] Agora posso abaixar e ficou em uma proporção bem legal. Então, esse é o nosso “Error Rate”, atualmente estamos com 3.20% de erros 400; estamos com 2.67% de erros 404, e 0% de erros 500 nos últimos 5 minutos.
 
 [12:43] Essa aula, finalizamos aqui. Na próxima aula, vamos configurar mais dois painéis. Nos vemos na próxima aula.
+
+
+
+
+
+
+# dia 28/12/2022
+- criado painel Error Rate, com erros 400, 404, 500
+pois o painel criado ontem sumiu, provavelmente não foi salvo

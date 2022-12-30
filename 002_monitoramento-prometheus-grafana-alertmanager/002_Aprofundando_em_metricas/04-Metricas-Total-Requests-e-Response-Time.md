@@ -204,9 +204,114 @@ no próximo painel do Row "API RED".
 
 # dia 29/12/2022
 
-http_server_requests_seconds_sum
+- Adicionar novo Painel no row API RED.
 
 
-sum(increase(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m]))
 
-sum(increase(http_server_requests_seconds_sum{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m]))
+[06:14] Assim, vou conseguir, através disso, trabalhando com taxas, chegar no meu tempo de resposta. Tenho a métrica http_sever_requests_seconds_sum, vou colocar aqui as labels {application=”$application”, instance=”$instance”, job=”app-forum-api”}.
+
+[06:55] Posso tirar o /actuator/prometheus ou mantê-lo. Vou tirar e colocar o seletor de negação, uri!=”/actuator/Prometheus”. Tenho agora essa métrica sendo "plotada" para mim.
+
+[07:23] Porém, eu quero também olhar para um espaço de tempo não muito longo, então vou colocar [1m]. Logicamente, vou ter que trabalhar com uma função aqui. Vamos trabalhar com uma função nova chamada rate.
+
+[07:43] O rate traz a taxa do meu último minuto, ele faz uma conversão desse valor para a taxa. Tenho aqui essa média, essa taxa que está relacionada a essas requisições.
+
+- Em Metrics Browser:
+adicionar a função Rate
+rate(http_server_requests_seconds_sum{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m])
+
+
+[07:58] Vou trabalhar com uma passagem por referência de label na legenda. Olha a legenda como está, uma bagunça, muita coisa, vem todos os labels aqui.
+
+- No momento a legenda vem muito bagunçada, com todos os Labels e tudo mais:
+{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="CLIENT_ERROR", status="404", uri="/topicos/{id}"}
+{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/actuator/health"}
+{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos"}
+{application="app-forum-api", exception="None", instance="app-forum-api:8080", job="app-forum-api", method="GET", outcome="SUCCESS", status="200", uri="/topicos/{id}"}
+
+[08:10] Vou colocar a {{uri}}, vou colocar o método que foi usado {{method}}, “Get” ou “Post”, e vou colocar também o {{status}}, que é o código HTTP de retorno. Ficou legal agora, ficou mais simples de entender. A legenda fica assim: {{uri}}{{method}}{{status}}.
+
+- Ajustar a legenda:
+{{uri}} {{method}} {{status}}
+
+- Mudando para Table a legenda:
+/topicos/{id} GET 404
+/actuator/health GET 200
+/topicos GET 200
+/topicos/{id} GET 200 
+
+
+[08:34] Só que eu ainda não tenho o que preciso. Presta bem atenção, vou copiar tudo isso para não ter que digitar tudo de novo, mudando só a métrica, porque a métrica que vou usar para fazer a operação matemática não é a requests_seconds_sum, é a requests_seconds_count.
+
+[08:56] Vou fazer uma divisão, vou colar a métrica que eu copiei e vou mudar só o final, ao invés de sum, vou utilizar o count, http_server_requests_seconds_count. Então fica assim: rate(http_server_requests_seconds_sum{application=”$application”, instance=”$instance”, job=”app-forum-api”, uri!=”/actuator/Prometheus”}[1m])/rate(http_server_requests_seconds_count{application=”$application”, instance=”$instance”, job=”app-forum-api”, uri!=”/actuator/Prometheus”}[1m]).
+
+- Novo Metrics Browser:
+Através dessa expressão, eu consigo saber o tempo de resposta dos meus endpoints
+rate(http_server_requests_seconds_sum{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m]) / rate(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m])
+
+[9:06] Está feita. Através dessa expressão, eu consigo saber o tempo de resposta dos meus endpoints.Vou colocar aqui de título “RESPONSE TIME” e, na descrição, “Tempo de resposta no último minuto”. Vou trabalhar na legenda, eu quero uma visualização em forma de tabela para ela ficar mais organizada.
+
+- Nome do painel:
+RESPONSE TIME
+
+- Descrição:
+Tempo de resposta no último minuto
+
+- Legend mode:
+Table
+
+- Legend placement:
+Right
+
+- Legend Values:
+min
+max
+mean
+last *
+total
+
+- opacidade de nível 10
+
+- Show points:
+Never
+
+- Unit:
+Time | Seconds
+
+
+[09:45] Quero colocar essa tabela não embaixo, mas na direita, e agora vou selecionar alguns valores que vão aparecer na legenda para não termos só o gráfico como referência.
+
+[09:57] Vou colocar o valor mínimo, vou colocar o valor máximo, posso colocar a média de valores – se ficar muita coisa, nós tiramos – e vou colocar o último. Então, tenho o mínimo, o máximo, a média e o último valor.
+
+[10:20] Vou trabalhar agora no design da métrica. Vou colocar opacidade de nível 10, vou fazer um gradiente e vou tirar os pontos. Você pode manter o layout que você quiser, é a gosto.
+
+[10:40] Descendo, em “Standard options”, na “Unidade”, vou trabalhar com a unidade “Time” e vou "setar" como “Seconds”. Ele já fez a configuração aqui de segundos para mim.
+
+[11:04] Eu posso configurar a casa decimal. Se alguém achar estranho o que é 2.73 milissegundos, se você colocar 0 casas decimais, ele vai arredondar isso e você vai ter essa resposta. Porém, com o arredondamento, os dados não são tão precisos, então eu não aconselho fazer isso.
+
+[11:26] Vamos manter desse jeito. Não temos “Threshold” para a questão do tempo de resposta, então vou deixar desse jeito. Então, já temos uma métrica com o tempo de resposta dos endpoints da nossa API.
+
+-  Não temos “Threshold” para a questão do tempo de resposta, então vou deixar desse jeito
+
+[11:48] Tem aqui com o status 500, não está tendo nenhum erro 500, então está certo; 404 está aqui; 200, temos o mínimo, 1.42, e 1.94 para o máximo; e por aí vai.
+
+[12:07] Tem uma diferença legal. Quando eu consulto /topicos, eu consulto o Redis. A API fala com o Redis e traz do cache essa consulta. Então, você vai ver que ela é bem mais rápida do que o /topicos/(id), que vai no MySQL, por isso tem essa diferenciação.
+
+[12:40] O POST também vai no MySQL e tem uma lógica de autenticação, tem uma regra de negócio, então ele sempre vai ser mais demorado.
+
+[12:51] Está aqui o nosso “Response time”, depois nós formatamos isso de um jeito melhor, não vai ficar tão grande assim, vai ficar um pouco menor. Formatamos isso na próxima aula com a criação dos novos painéis.
+
+[13:08] Na próxima aula, vamos trabalhar com error rate e com requisições por segundo, com o número de requisições por segundo. Nos vemos na próxima aula.
+
+
+- Código 200 no /topicos é rápido porque é cacheado devido o REDIS.
+- O código 200 do /topicos/(id) é um pouco mais demorado, porque vai até o MYSQL.
+- O POST também vai no MySQL e tem uma lógica de autenticação, tem uma regra de negócio, então ele sempre vai ser mais demorado.
+
+
+
+
+
+
+
+
