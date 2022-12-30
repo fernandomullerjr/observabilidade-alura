@@ -200,3 +200,13 @@ short
 
 - Continua em 5:49
 no próximo painel do Row "API RED".
+
+
+# dia 29/12/2022
+
+http_server_requests_seconds_sum
+
+
+sum(increase(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m]))
+
+sum(increase(http_server_requests_seconds_sum{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m]))
