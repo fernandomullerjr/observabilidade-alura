@@ -82,7 +82,7 @@ for i in "${array[@]}" ; do date -d $i ; done
 
 
 - Curso2 - diretório:
-cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+cd /home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
 
 
 - Grafana precisa de ajuste nas permissões:
@@ -120,20 +120,26 @@ curl -v http://192.168.92.129:80/topicos/2
 curl -v http://192.168.92.129:80/topicos/3
 
 - Diretório principal:
-cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+cd /home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
 
 - Subindo stack
-cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+cd /home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
 docker-compose up -d
 
 - Buildando aplicação e validando se está tudo ok
-cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app
+cd /home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app
 mvn clean package
 
 - Subindo aplicação:
-cd /home/fernando/cursos/sre-alura/monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app
+cd /home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01/app
 sh start.sh
 
 - Grafana acessível:
 http://192.168.92.129:3000
 <http://192.168.92.129:3000>
+
+- Desligando o projeto
+cd /home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+docker-compose down
+
+/home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager

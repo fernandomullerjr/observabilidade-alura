@@ -260,3 +260,14 @@ LATENCY AVERAGE
 Página do Grafana, mostrando a *row* API RED. Há 5 indicadores: *Total Requests*, *Error 500*, *Error rate*, *Latency average* e *Response time*.
 
 
+
+
+# PENDENTE
+- Ver mais sobre histogram_quantile
+https://blog.cisne.dev/montando-5-graficos-com-uma-metrica-do-prometheus/
+<https://blog.cisne.dev/montando-5-graficos-com-uma-metrica-do-prometheus/>
+
+
+
+
+
