@@ -5,10 +5,11 @@ cd /home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertman
 docker-compose up -d
 
 
+### Grafana
+
 - Grafana acessível:
 http://192.168.0.110:3000
 <http://192.168.0.110:3000>
-
 
 - Usuário e senha padrão
 admin
@@ -21,6 +22,9 @@ nemsei90
 admin
 nemsei90
 
+
+
+### Métricas
 
 - Endpoint das métricas:
 http://192.168.0.110/metrics
