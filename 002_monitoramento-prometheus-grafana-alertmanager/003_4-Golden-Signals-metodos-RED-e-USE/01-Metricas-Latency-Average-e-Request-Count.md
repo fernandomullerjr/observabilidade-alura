@@ -8,7 +8,7 @@
 
 git status
 git add .
-git commit -m "Curso monitoramento-prometheus-grafana-alertmanager - Modulo 003 - Aula  01 Métricas Latency Average e Request Count"
+git commit -m "Curso monitoramento-prometheus-grafana-alertmanager - Modulo 003 - Aula 01 Métricas Latency Average e Request Count"
 eval $(ssh-agent -s)
 ssh-add /home/fernando/.ssh/chave-debian10-github
 git push
@@ -416,3 +416,91 @@ Ajustado o painel Latency Average. Ajustada opacidade, legenda em formato tabela
 	26.5 ms
 25%
 	13.2 ms
+
+
+
+
+
+
+
+
+[07:38] Isso é muito importante para entendermos que estamos dentro de um objetivo de nível de serviço. Essa métrica, sendo melhor trabalhada, não olhando só para o último minuto, pode ser muito importante para você formar uma SLI.
+
+[07:55] Agora, vamos trabalhar na composição de mais uma métrica, que é a contagem de requisições. Quero saber quantas requisições estou recebendo em cada endpoint.
+
+[08:08] Vou trabalhar com http_requests_seconds_count, vou trabalhar com os meus labels de sempre, {application=”$application”, instance=”$instance”, job=”app-forum-api”}.
+
+[08:08] Vou trabalhar com http_requests_seconds_count, vou trabalhar com os meus labels de sempre, {application=”$application”, instance=”$instance”, job=”app-forum-api”}.
+
+
+[08:40] Agora, vou colocar um seletor porque quero olhar para endpoints específicos. Quero olhar para uri=”/topicos”} e quero pegar, dentro de /topicos, o meu último minuto, [1m].
+
+[08:55] O que vou fazer aqui é olhar a taxa de crescimento, então vou usar o increase para pegar essa taxa de crescimento. Aqui, tenho dois valores retornados, porque também tenho exception voltando aqui. Na verdade, tenho SERVER_ERROR que foi o 500 quando bateu.
+
+[09:17] Eu posso fazer uma agregação para juntar tudo isso utilizando o sum e ter uma linha só dentro dessa minha métrica. Vou colocar aqui /topicos como legenda. Vou copiar essa query, vou formar uma segunda query em que vou colocar uri="/topicos/(id)". Na legenda, vou colocar “/topicos/(id)”.
+
+- Criar um novo painel
+usar a métrica:
+    http_requests_seconds_count
+adicionar os labels de sempre
+    {application="$application", instance="$instance", job="app-forum-api", "}
+Quero olhar para uri=”/topicos”} e quero pegar, dentro de /topicos, o meu último minuto, [1m].
+    uri="/topicos"}[1m]
+O que vou fazer aqui é olhar a taxa de crescimento, então vou usar o increase para pegar essa taxa de crescimento
+    increase
+
+- Ficando assim a query:
+
+~~~~bash
+increase(http_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"}[1m])
+~~~~
+
+
+
+
+- Usando opção "explain" no Query Editor:
+
+http_requests_seconds_count {application="$application", instance="$instance", job="app-forum-api", uri="/topicos"}
+Fetch all series matching metric name and label filters.
+
+increase(<expr>[1m])
+
+Calculates the increase in the time series in the range vector. Breaks in monotonicity (such as counter resets due to target restarts) are automatically adjusted for. The increase is extrapolated to cover the full time range as specified in the range vector selector, so that it is possible to get a non-integer result even if a counter increases only by integer increments.
+
+
+
+
+
+
+
+
+- TSHOOT
+porque esta métrica não está mostrando nada no painel do Prometheus?
+
+increase(http_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"}[1m])
+
+A métrica que você está tentando visualizar no painel do Prometheus é um contador que conta a quantidade de requisições HTTP para uma determinada URI em um período de tempo específico.
+
+A expressão que você usou na consulta Prometheus é increase(http_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"}[1m]), que utiliza a função increase() para calcular a taxa de aumento do contador no último minuto.
+
+Se essa métrica não está aparecendo no painel do Prometheus, pode ser devido a alguns motivos, como:
+
+    O nome da métrica ou as tags usadas na consulta estão incorretos
+    O período de tempo especificado na consulta não está cobrindo a janela de tempo em que os dados estão sendo coletados
+    O coletor de métricas não está configurado corretamente ou não está coletando os dados de forma adequada
+    A instância ou job que você está consultando não está gerando nenhum dado para essa métrica
+
+Para verificar se a métrica está sendo coletada corretamente, você pode verificar o status do coletor de métricas que está sendo usado para coletar esses dados, bem como as configurações e tags usadas na definição da métrica.
+
+Além disso, você pode tentar simplificar a expressão Prometheus e remover as tags application e instance para ver se a métrica está sendo coletada de forma geral. Por exemplo, você pode usar a expressão increase(http_requests_seconds_count{job="app-forum-api", uri="/topicos"}[1m]) para contar o número de requisições HTTP para a URI "/topicos" no último minuto.
+
+
+
+
+
+sum(increase(http_requests_seconds_count{application=”$application”, instance=”$instance”, job=”app-forum-api”, uri=”/auth”} [1m])
+
+
+increase(http_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"}[1m])
+
+sum(increase(http_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"} [1m]))

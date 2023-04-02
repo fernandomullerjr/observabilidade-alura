@@ -22,6 +22,9 @@ nemsei90
 admin
 nemsei90
 
+- Grafana precisa de ajuste nas permissões:
+sudo chmod 777 -R grafana/
+sudo chmod 777 -R Grafana/
 
 
 ### Métricas
@@ -33,7 +36,44 @@ http://192.168.0.110/metrics
 
 
 
+
+### Endpoints
+
+- Acessando:
+192.168.0.110:8080/topicos
+http://192.168.0.110:8080/topicos/1
+
+curl -v http://192.168.0.110:8080/topicos/1
+curl -v http://192.168.0.110:8080/topicos/2
+curl -v http://192.168.0.110:8080/topicos/3
+
+- Agora é possível acessar o Actuator:
+http://192.168.0.110:8080/actuator
+
+- Acessando o Health:
+http://192.168.0.110:8080/actuator/health
+
+- Acessando o Info:
+http://192.168.0.110:8080/actuator/info
+
+- Acessando as métricas em Metrics:
+http://192.168.0.110:8080/actuator/metrics
+
+
+
+
+
 ### Outros comandos úteis
 
 docker container start mysql-forum-api
 docker container start redis-forum-api
+
+
+- Simulando erros no JDBC:
+docker container stop mysql-forum-api
+docker container start mysql-forum-api
+
+
+- Conectando no Container do Prometheus:
+docker container exec -ti prometheus-forum-api sh
+
