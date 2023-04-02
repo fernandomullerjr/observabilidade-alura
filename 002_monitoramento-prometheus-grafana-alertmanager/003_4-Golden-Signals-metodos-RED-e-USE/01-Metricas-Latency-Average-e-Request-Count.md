@@ -313,13 +313,14 @@ http://192.168.0.110/metrics
 # ##############################################################################################################################################################
 # ##############################################################################################################################################################
 # ##############################################################################################################################################################
-# 
-# PENDENTE
-- Ver mais sobre histogram_quantile
+# # PENDENTE
+
+- Ver mais sobre histogram_quantile. Usar ChatGPT para auxiliar no entendimento.
+site abaixo tem exemplos:
 https://blog.cisne.dev/montando-5-graficos-com-uma-metrica-do-prometheus/
 <https://blog.cisne.dev/montando-5-graficos-com-uma-metrica-do-prometheus/>
 
-
+- Organizar Favoritos
 
 
 
