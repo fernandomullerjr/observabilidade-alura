@@ -336,3 +336,83 @@ https://blog.cisne.dev/montando-5-graficos-com-uma-metrica-do-prometheus/
 
 
 4:47
+
+
+[05:21] Vou conseguir obter essa informação através desse painel. Vou chamar de “LATENCY AVERAGE” e vou colocar aqui na descrição “Latência média por minuto”.
+
+[05:48] Na legenda, vou colocar em formado de tabela, vou colocar à direita; e, em valores, vou colocar o último valor coletado, acho que é o suficiente.
+5:48
+
+- Editando o painel "Latency Average":
+colocando a descrição:
+Latencia média por minuto
+
+
+
+- Ajustando o formato do Painel
+
+editando as opções da legenda:
+
+Mode:
+Table
+
+Placement:
+Right
+
+Values:
+Last *
+esta opção vai trazer o último valor existente
+
+
+
+- Ajustando demais opções do Painel:
+
+Fill opacity:
+70
+
+Gradient Mode:
+Opacity
+
+Show points:
+Never
+
+
+
+- Ajustando Standard Options
+no campo Unit, vamos usar unidade de tempo, Time, segundos
+esta opção vai trazer a notação em milisegundos, bem interessante
+
+Unit:
+Time > seconds(s)
+
+
+
+
+
+Save dashboard
+dash-forum-api
+
+Ajustado o painel Latency Average. Ajustada opacidade, legenda em formato tabela e medida em segundos.
+
+
+
+
+
+
+[06:30] Está aqui, já temos o nosso painel de latência. Vou colocar esse painel aqui, expandi-lo, ficou bem interessante. Vou deixá-lo assim, vou diminuir um pouco esses outros para tentar igualar no tamanho. Pronto, assim está bem interessante.
+
+[07:11] Já temos aqui a nossa latência sendo registrada. Agora, sabemos que 99% das nossas requisições estão iguais ou menores a 131 milissegundos. Sabemos que 90% está igual ou menor que 73 milissegundos, e assim sucessivamente, é só seguir essa linha de raciocínio.
+
+- No meu caso, 99% das requisições estão iguais ou menos a 173 milisegundos, e assim por diante:
+
+	Last *
+99%
+	173 ms
+90%
+	47.6 ms
+75%
+	39.7 ms
+50%
+	26.5 ms
+25%
+	13.2 ms
