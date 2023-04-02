@@ -41,11 +41,11 @@ http://192.168.0.110/metrics
 
 - Acessando:
 192.168.0.110:8080/topicos
-http://192.168.0.110:8080/topicos/1
+http://192.168.0.110:80/topicos/1
 
-curl -v http://192.168.0.110:8080/topicos/1
-curl -v http://192.168.0.110:8080/topicos/2
-curl -v http://192.168.0.110:8080/topicos/3
+curl -v http://192.168.0.110:80/topicos/1
+curl -v http://192.168.0.110:80/topicos/2
+curl -v http://192.168.0.110:80/topicos/3
 
 - Agora é possível acessar o Actuator:
 http://192.168.0.110:8080/actuator
@@ -77,3 +77,10 @@ docker container start mysql-forum-api
 - Conectando no Container do Prometheus:
 docker container exec -ti prometheus-forum-api sh
 
+- Logs nos Containers:
+
+docker logs grafana-forum-api -f --tail 22
+docker logs app-forum-api -f --tail 22
+docker logs prometheus-forum-api -f --tail 22
+docker logs proxy-forum-api -f --tail 22
+docker logs client-forum-api -f --tail 22

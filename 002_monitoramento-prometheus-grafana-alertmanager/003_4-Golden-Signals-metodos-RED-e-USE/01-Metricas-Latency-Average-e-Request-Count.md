@@ -504,3 +504,424 @@ sum(increase(http_requests_seconds_count{application=”$application”, instanc
 increase(http_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"}[1m])
 
 sum(increase(http_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"} [1m]))
+
+
+
+- Painel só apresenta "No data" ao formar as queries:
+No data
+
+
+
+- Erros ao tentar curl para os endpoints:
+talvez não tenha dados devido isto
+
+~~~~bash
+fernando@debian10x64:~$
+fernando@debian10x64:~$ curl -v http://192.168.0.110:8080/topicos/1
+* Expire in 0 ms for 6 (transfer 0x55da35580fb0)
+*   Trying 192.168.0.110...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x55da35580fb0)
+* connect to 192.168.0.110 port 8080 failed: Connection refused
+* Failed to connect to 192.168.0.110 port 8080: Connection refused
+* Closing connection 0
+curl: (7) Failed to connect to 192.168.0.110 port 8080: Connection refused
+fernando@debian10x64:~$ curl -v http://192.168.0.110:8080/topicos/2
+* Expire in 0 ms for 6 (transfer 0x55faf8570fb0)
+*   Trying 192.168.0.110...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x55faf8570fb0)
+* connect to 192.168.0.110 port 8080 failed: Connection refused
+* Failed to connect to 192.168.0.110 port 8080: Connection refused
+* Closing connection 0
+curl: (7) Failed to connect to 192.168.0.110 port 8080: Connection refused
+fernando@debian10x64:~$ curl -v http://192.168.0.110:8080/topicos/3
+* Expire in 0 ms for 6 (transfer 0x55839a734fb0)
+*   Trying 192.168.0.110...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x55839a734fb0)
+* connect to 192.168.0.110 port 8080 failed: Connection refused
+* Failed to connect to 192.168.0.110 port 8080: Connection refused
+* Closing connection 0
+curl: (7) Failed to connect to 192.168.0.110 port 8080: Connection refused
+fernando@debian10x64:~$
+~~~~
+
+
+
+
+- Logs do container do Grafana:
+
+docker logs grafana-forum-api -f --tail 22
+
+~~~~bash
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ docker logs grafana-forum-api -f --tail 22
+logger=tsdb.prometheus t=2023-04-02T18:16:29.979803687Z level=error msg="Range query failed" query="sum(increase(http_requests_seconds_count{application=\"app-forum-api\", instance=\"app-forum-api:8080\", job=\"app-forum-api\", uri=\"/topicos\"} [1m])" error="bad_data: 1:144: parse error: unclosed left parenthesis" detail=
+logger=context userId=1 orgId=1 uname=admin t=2023-04-02T18:16:29.980055383Z level=info msg="Request Completed" method=POST path=/api/ds/query status=400 remote_addr=192.168.0.109 time_ms=3 duration=3.151656ms size=97 referer="http://192.168.0.110:3000/d/M7JCg3d4k/dash-forum-api?editPanel=32&orgId=1" handler=/api/ds/query
+logger=tsdb.prometheus t=2023-04-02T18:16:30.03557203Z level=error msg="Range query failed" query="sum(increase(http_requests_seconds_count{application=\"app-forum-api\", instance=\"app-forum-api:8080\", job=\"app-forum-api\", uri=\"/topicos\"} [1m])" error="bad_data: 1:144: parse error: unclosed left parenthesis" detail=
+logger=context userId=1 orgId=1 uname=admin t=2023-04-02T18:16:30.035690158Z level=info msg="Request Completed" method=POST path=/api/ds/query status=400 remote_addr=192.168.0.109 time_ms=2 duration=2.223961ms size=97 referer="http://192.168.0.110:3000/d/M7JCg3d4k/dash-forum-api?editPanel=32&orgId=1" handler=/api/ds/query
+logger=cleanup t=2023-04-02T18:19:32.703753424Z level=info msg="Completed cleanup jobs" duration=6.072401ms
+logger=cleanup t=2023-04-02T18:29:32.706275917Z level=info msg="Completed cleanup jobs" duration=9.387226ms
+logger=cleanup t=2023-04-02T18:39:32.704497226Z level=info msg="Completed cleanup jobs" duration=6.75785ms
+logger=cleanup t=2023-04-02T18:49:32.700962832Z level=info msg="Completed cleanup jobs" duration=4.026247ms
+logger=cleanup t=2023-04-02T18:59:32.700277835Z level=info msg="Completed cleanup jobs" duration=3.973002ms
+logger=cleanup t=2023-04-02T19:09:32.700074294Z level=info msg="Completed cleanup jobs" duration=4.026259ms
+logger=cleanup t=2023-04-02T19:19:32.70027464Z level=info msg="Completed cleanup jobs" duration=3.528801ms
+logger=cleanup t=2023-04-02T19:29:32.700090801Z level=info msg="Completed cleanup jobs" duration=3.510509ms
+logger=cleanup t=2023-04-02T19:39:32.70015702Z level=info msg="Completed cleanup jobs" duration=3.679948ms
+logger=cleanup t=2023-04-02T19:49:32.701690257Z level=info msg="Completed cleanup jobs" duration=4.088924ms
+logger=cleanup t=2023-04-02T19:59:32.702344599Z level=info msg="Completed cleanup jobs" duration=4.754899ms
+logger=cleanup t=2023-04-02T20:09:32.701702697Z level=info msg="Completed cleanup jobs" duration=4.047531ms
+logger=cleanup t=2023-04-02T20:19:32.700146109Z level=info msg="Completed cleanup jobs" duration=3.750179ms
+logger=cleanup t=2023-04-02T20:29:32.70510394Z level=info msg="Completed cleanup jobs" duration=7.910009ms
+logger=cleanup t=2023-04-02T20:39:32.700449568Z level=info msg="Completed cleanup jobs" duration=4.077806ms
+logger=cleanup t=2023-04-02T20:49:32.702951587Z level=info msg="Completed cleanup jobs" duration=4.970326ms
+logger=cleanup t=2023-04-02T20:59:32.701660236Z level=info msg="Completed cleanup jobs" duration=4.597479ms
+logger=cleanup t=2023-04-02T21:09:32.701370875Z level=info msg="Completed cleanup jobs" duration=4.440952ms
+~~~~
+
+
+
+
+
+
+
+docker logs app-forum-api -f --tail 22
+
+
+docker logs client-forum-api -f --tail 22
+
+
+docker logs client-forum-api -f --tail 22
+docker logs prometheus-forum-api -f --tail 22
+docker logs proxy-forum-api -f --tail 22
+docker logs client-forum-api -f --tail 22
+
+
+
+- Logs no Container Proxy:
+
+docker logs proxy-forum-api -f --tail 22
+
+~~~~bash
+fernando@debian10x64:~$ docker logs proxy-forum-api -f --tail 22
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2023/04/02 16:29:31 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "POST /auth HTTP/1.1", upstream: "http://172.21.0.2:8080/auth", host: "proxy-forum-api"
+2023/04/02 16:29:32 [error] 30#30: *3 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos/2 HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos/2", host: "proxy-forum-api"
+2023/04/02 16:29:33 [error] 30#30: *5 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos/3 HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos/3", host: "proxy-forum-api"
+2023/04/02 16:29:34 [error] 30#30: *7 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "POST /auth HTTP/1.1", upstream: "http://172.21.0.2:8080/auth", host: "proxy-forum-api"
+2023/04/02 16:29:35 [error] 30#30: *9 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos/1 HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos/1", host: "proxy-forum-api"
+2023/04/02 16:29:35 [error] 30#30: *11 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos/1 HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos/1", host: "proxy-forum-api"
+2023/04/02 16:29:36 [error] 30#30: *13 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos", host: "proxy-forum-api"
+2023/04/02 16:29:37 [error] 30#30: *15 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos", host: "proxy-forum-api"
+2023/04/02 16:29:38 [error] 30#30: *17 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos", host: "proxy-forum-api"
+2023/04/02 16:29:38 [error] 30#30: *19 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos", host: "proxy-forum-api"
+2023/04/02 16:29:39 [error] 30#30: *21 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos/3 HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos/3", host: "proxy-forum-api"
+2023/04/02 16:29:40 [error] 30#30: *23 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos", host: "proxy-forum-api"
+2023/04/02 16:29:41 [error] 30#30: *25 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos", host: "proxy-forum-api"
+2023/04/02 16:29:42 [error] 30#30: *27 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos", host: "proxy-forum-api"
+2023/04/02 16:29:42 [error] 30#30: *29 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos/3 HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos/3", host: "proxy-forum-api"
+2023/04/02 16:29:43 [error] 30#30: *31 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos", host: "proxy-forum-api"
+2023/04/02 16:29:44 [error] 30#30: *33 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos", host: "proxy-forum-api"
+2023/04/02 16:29:45 [error] 30#30: *35 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos/2 HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos/2", host: "proxy-forum-api"
+2023/04/02 16:29:45 [error] 30#30: *37 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos", host: "proxy-forum-api"
+2023/04/02 16:29:46 [error] 30#30: *39 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.3, server: _, request: "GET /topicos/1 HTTP/1.1", upstream: "http://172.21.0.2:8080/topicos/1", host: "proxy-forum-api"
+^C
+fernando@debian10x64:~$
+~~~~
+
+
+
+
+
+
+
+
+
+
+
+
+- Erro durante curl era devido a porta 8080, projeto atual escuta na porta 80, conforme container do Proxy:
+
+~~~~bash
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ curl -v http://192.168.0.110:80/topicos/1
+* Expire in 0 ms for 6 (transfer 0x563e3dde8fb0)
+*   Trying 192.168.0.110...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x563e3dde8fb0)
+* Connected to 192.168.0.110 (192.168.0.110) port 80 (#0)
+> GET /topicos/1 HTTP/1.1
+> Host: 192.168.0.110
+> User-Agent: curl/7.64.0
+> Accept: */*
+>
+< HTTP/1.1 200
+< Server: nginx
+< Date: Sun, 02 Apr 2023 21:31:07 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1; mode=block
+< Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+< Pragma: no-cache
+< Expires: 0
+< X-Frame-Options: DENY
+<
+* Connection #0 to host 192.168.0.110 left intact
+{"id":1,"titulo":"Duvida 1","mensagem":"Erro ao criar projeto","dataCriacao":"2019-05-05T18:00:00","nomeAutor":"Aluno","status":"NAO_RESPONDIDO","respostas":[]}fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ curl -v http://192.168.0.110:80/topicos/2
+* Expire in 0 ms for 6 (transfer 0x5642c14fdfb0)
+*   Trying 192.168.0.110...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x5642c14fdfb0)
+* Connected to 192.168.0.110 (192.168.0.110) port 80 (#0)
+> GET /topicos/2 HTTP/1.1
+> Host: 192.168.0.110
+> User-Agent: curl/7.64.0
+> Accept: */*
+>
+< HTTP/1.1 200
+< Server: nginx
+< Date: Sun, 02 Apr 2023 21:31:07 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1; mode=block
+< Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+< Pragma: no-cache
+< Expires: 0
+< X-Frame-Options: DENY
+<
+* Connection #0 to host 192.168.0.110 left intact
+{"id":2,"titulo":"Duvida 2","mensagem":"Projeto nao compila","dataCriacao":"2019-05-05T19:00:00","nomeAutor":"Aluno","status":"NAO_RESPONDIDO","respostas":[]}fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ curl -v http://192.168.0.110:80/topicos/3
+* Expire in 0 ms for 6 (transfer 0x55b76de0afb0)
+*   Trying 192.168.0.110...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x55b76de0afb0)
+* Connected to 192.168.0.110 (192.168.0.110) port 80 (#0)
+> GET /topicos/3 HTTP/1.1
+> Host: 192.168.0.110
+> User-Agent: curl/7.64.0
+> Accept: */*
+>
+< HTTP/1.1 200
+< Server: nginx
+< Date: Sun, 02 Apr 2023 21:31:08 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1; mode=block
+< Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+< Pragma: no-cache
+< Expires: 0
+< X-Frame-Options: DENY
+<
+* Connection #0 to host 192.168.0.110 left intact
+{"id":3,"titulo":"Duvida 3","mensagem":"Tag HTML","dataCriacao":"2019-05-05T20:00:00","nomeAutor":"Aluno","status":"NAO_RESPONDIDO","respostas":[]}fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED       STATUS                 PORTS                                       NAMES
+2810038281ef   client-forum-api         "/scripts/client.sh"     5 hours ago   Up 5 hours                                                         client-forum-api
+57527b3d5197   grafana/grafana          "/run.sh"                5 hours ago   Up 5 hours             0.0.0.0:3000->3000/tcp, :::3000->3000/tcp   grafana-forum-api
+2fbf7bb4b469   prom/prometheus:latest   "/bin/prometheus --c…"   5 hours ago   Up 5 hours             0.0.0.0:9090->9090/tcp, :::9090->9090/tcp   prometheus-forum-api
+025c15588abe   nginx                    "/docker-entrypoint.…"   5 hours ago   Up 5 hours             0.0.0.0:80->80/tcp, :::80->80/tcp           proxy-forum-api
+86dd81e3535b   app-forum-api            "java -Xms128M -Xmx1…"   5 hours ago   Up 5 hours (healthy)                                               app-forum-api
+0f4fb1da5331   mysql:5.7                "docker-entrypoint.s…"   5 hours ago   Up 5 hours                                                         mysql-forum-api
+5c685991d5cd   redis                    "docker-entrypoint.s…"   5 hours ago   Up 5 hours                                                         redis-forum-api
+fernando@debian10x64:~/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01$
+~~~~
+
+
+
+
+
+
+- Query segue com "No Data" no Prometheus.
+
+~~~~bash
+Painel do Prometheus segue acusando "No data". 
+
+Se o painel do Prometheus está acusando "No data", pode haver alguns motivos pelos quais os dados não estão sendo exibidos corretamente. Algumas possíveis causas e soluções incluem:
+
+    Não há dados para exibir: Verifique se os dados estão sendo coletados e se estão disponíveis para consulta. Você pode verificar isso executando uma consulta manualmente no Prometheus, usando a interface de consulta (Query) do Prometheus.
+
+    A consulta (Query) está incorreta: Verifique se a consulta Prometheus que você está usando no painel está correta. Certifique-se de que a consulta está retornando resultados e que não há erros de sintaxe na consulta.
+
+    O tempo especificado na consulta não corresponde aos dados coletados: Verifique se o período de tempo que você está especificando na consulta Prometheus corresponde ao período de tempo em que os dados foram coletados. Certifique-se de que os dados que você está tentando visualizar não estão fora do período de tempo que você especificou.
+
+    A fonte de dados (Data source) está incorreta ou não foi configurada corretamente: Verifique se a fonte de dados que você está usando no painel está configurada corretamente e está apontando para o endereço correto do Prometheus. Certifique-se também de que o tipo de consulta que você está usando no painel corresponde ao tipo de dados que você está tentando visualizar.
+
+    A métrica ou as tags usadas na consulta estão incorretas: Verifique se o nome da métrica e as tags que você está usando na consulta Prometheus estão corretas. Certifique-se de que as tags estão sendo usadas corretamente na consulta e que estão retornando resultados.
+
+    O painel está configurado incorretamente: Verifique se o painel está configurado corretamente e se todas as opções e configurações estão corretas. Certifique-se de que o painel está usando a fonte de dados correta e que todas as consultas estão configuradas corretamente.
+
+Espero que essas dicas ajudem você a resolver o problema de "No data" no painel do Prometheus. Se você ainda estiver enfrentando problemas, tente revisar sua configuração do Prometheus e do painel em busca de outras possíveis causas de problemas.
+~~~~
+
+
+porque esta métrica não está mostrando nada no painel do Prometheus?
+
+increase(http_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"}[1m])
+
+A métrica que você está tentando visualizar no painel do Prometheus é um contador que conta a quantidade de requisições HTTP para uma determinada URI em um período de tempo específico.
+
+A expressão que você usou na consulta Prometheus é increase(http_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"}[1m]), que utiliza a função increase() para calcular a taxa de aumento do contador no último minuto.
+
+Se essa métrica não está aparecendo no painel do Prometheus, pode ser devido a alguns motivos, como:
+
+    O nome da métrica ou as tags usadas na consulta estão incorretos
+    O período de tempo especificado na consulta não está cobrindo a janela de tempo em que os dados estão sendo coletados
+    O coletor de métricas não está configurado corretamente ou não está coletando os dados de forma adequada
+    A instância ou job que você está consultando não está gerando nenhum dado para essa métrica
+
+Para verificar se a métrica está sendo coletada corretamente, você pode verificar o status do coletor de métricas que está sendo usado para coletar esses dados, bem como as configurações e tags usadas na definição da métrica.
+
+Além disso, você pode tentar simplificar a expressão Prometheus e remover as tags application e instance para ver se a métrica está sendo coletada de forma geral. Por exemplo, você pode usar a expressão increase(http_requests_seconds_count{job="app-forum-api", uri="/topicos"}[1m]) para contar o número de requisições HTTP para a URI "/topicos" no último minuto.
+
+
+
+
+
+- Exemplo de uma OK
+rate(http_server_requests_seconds_sum{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m]) / rate(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m])
+
+
+- Editada:
+increase(http_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"}[1m])
+
+- Não funcionou.
+
+
+- Verificando o Endpoint de métricas:
+http://192.168.0.110/metrics
+Não consta esta métrica:
+http_requests_seconds_count
+
+
+- Nome da métrica estava errado.
+DE:
+http_requests_seconds_count
+PARA:
+http_server_requests_seconds_count
+
+
+
+
+
+
+
+
+### Retomando
+
+
+
+[07:38] Isso é muito importante para entendermos que estamos dentro de um objetivo de nível de serviço. Essa métrica, sendo melhor trabalhada, não olhando só para o último minuto, pode ser muito importante para você formar uma SLI.
+
+[07:55] Agora, vamos trabalhar na composição de mais uma métrica, que é a contagem de requisições. Quero saber quantas requisições estou recebendo em cada endpoint.
+
+[08:08] Vou trabalhar com http_requests_seconds_count, vou trabalhar com os meus labels de sempre, {application=”$application”, instance=”$instance”, job=”app-forum-api”}.
+
+[08:08] Vou trabalhar com http_requests_seconds_count, vou trabalhar com os meus labels de sempre, {application=”$application”, instance=”$instance”, job=”app-forum-api”}.
+
+
+[08:40] Agora, vou colocar um seletor porque quero olhar para endpoints específicos. Quero olhar para uri=”/topicos”} e quero pegar, dentro de /topicos, o meu último minuto, [1m].
+
+[08:55] O que vou fazer aqui é olhar a taxa de crescimento, então vou usar o increase para pegar essa taxa de crescimento. Aqui, tenho dois valores retornados, porque também tenho exception voltando aqui. Na verdade, tenho SERVER_ERROR que foi o 500 quando bateu.
+
+[09:17] Eu posso fazer uma agregação para juntar tudo isso utilizando o sum e ter uma linha só dentro dessa minha métrica. Vou colocar aqui /topicos como legenda. Vou copiar essa query, vou formar uma segunda query em que vou colocar uri="/topicos/(id)". Na legenda, vou colocar “/topicos/(id)”.
+
+- Criar um novo painel
+usar a métrica:
+    http_server_requests_seconds_count
+adicionar os labels de sempre
+    {application="$application", instance="$instance", job="app-forum-api", "}
+Quero olhar para uri=”/topicos”} e quero pegar, dentro de /topicos, o meu último minuto, [1m].
+    uri="/topicos"}[1m]
+O que vou fazer aqui é olhar a taxa de crescimento, então vou usar o increase para pegar essa taxa de crescimento
+    increase
+Eu posso fazer uma agregação para juntar tudo isso utilizando o sum e ter uma linha só dentro dessa minha métrica
+    sum
+
+
+- Ficando assim a query:
+
+~~~~bash
+sum(increase(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos"}[1m]))
+~~~~
+
+- Legenda
+/topicos
+
+
+
+- Adicionar uma segunda query, usando {id} após /topicos:
+
+~~~~bash
+sum(increase(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/topicos/{id}"}[1m]))
+~~~~
+
+- Legenda
+/topicos/{id}
+
+
+
+- Adicionar outra query, usando o path de autenticação /auth:
+
+~~~~bash
+sum(increase(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", uri="/auth"}[1m]))
+~~~~
+
+- Legenda
+/auth
+
+
+
+
+
+
+[09:58] Agora, vou também criar uma nova query e trabalhar com o uri="/auth", o endpoint de autenticação, sum(increase(http_requests_seconds_count{application=”$application”, instance=”$instance”, job=”app-forum-api”, uri=”/auth”} [1m]). Feito, agora vamos trabalhar em como esse painel vai ficar, como vai ser a formatação dele.
+
+[10:22] Vou colocar o título como “REQUEST COUNT”. Descrição será “Número de requisições por endpoint no último minuto”. Vou ter a visualização em forma tabular, a legenda vai ficar embaixo mesmo.
+
+[11:02] Aqui, vou colocar o valor mínimo, o valor máximo, a média e o último valor não nulo. Agora, na parte de formatação, vou seguir o padrão de sempre – opacidade, gradiente, vou tirar os pontos, e é isso.
+
+[11:30] Na parte de unidade, não tenho que mudar, porque preciso de um número inteiro, que é o número de requisições que eu sofri no último minuto. Então, está concluído.
+
+Gráfico "*Request Count*". O eixo x mostra a passagem de tempo de 1 em 1 minuto, o eixo y apresenta os valores 20 e 40. A linha verde (referente a /topicos) oscila próximo do valor 40. A linha amarela (/topicos/(id)) oscila próximo de 20. A linha azul (/auth) oscila abaixo de 20.
+
+[11:46] Vamos olhar para esse painel. Vou trazê-lo para baixo e vou aumentar o tamanho dele para não ter que usar scroll. Está correto.
+
+[12:06] Encerramos essa aula aqui, nós configuramos a nossa média de latência, o Latency Average, trabalhamos com Request Count e, na próxima aula, vamos trabalhar com a duração das requisições.
+
+[12:21] Vamos criar mais dois painéis: um com a média de duração de requisição e outro com a duração máxima. Nos vemos na próxima aula.
+
+
+- Criando novo painel:
+
+Nome:
+REQUEST COUNT
+
+descrição:
+Número de requisições por endpoint no último minuto.
+
+Legenda:
+visualização em forma tabular, a legenda vai ficar embaixo mesmo.
+
+Legend values:
+vou colocar o valor mínimo, o valor máximo, a média e o último valor não nulo.
+
+Formatação:
+opacidade, gradiente, vou tirar os pontos
+
+Unit:
+Na parte de unidade, não tenho que mudar, porque preciso de um número inteiro, que é o número de requisições que eu sofri no último minuto. Então, está concluído.
