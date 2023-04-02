@@ -223,20 +223,36 @@ http_server_requests_seconds_sum{application="app-forum-api",exception="None",me
 
 - Adicionar mais uma Query, agora para descobrir as que se enquadram em 90% dos casos:
 em Metrics Browser:
+
+~~~~bash
 histogram_quantile(0.90, sum(rate(http_server_requests_seconds_bucket{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m])) by (le))
+~~~~
+
 
 - Adicionar mais uma Query, agora para descobrir as que se enquadram em 75% dos casos:
 em Metrics Browser:
+
+~~~~bash
 histogram_quantile(0.75, sum(rate(http_server_requests_seconds_bucket{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m])) by (le))
+~~~~
+
+
 
 - Adicionar mais uma Query, agora para descobrir as que se enquadram em 50% dos casos:
 em Metrics Browser:
+
+~~~~bash
 histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m])) by (le))
+~~~~
+
+
 
 - Adicionar mais uma Query, agora para descobrir as que se enquadram em 25% dos casos:
 em Metrics Browser:
-histogram_quantile(0.25, sum(rate(http_server_requests_seconds_bucket{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m])) by (le))
 
+~~~~bash
+histogram_quantile(0.25, sum(rate(http_server_requests_seconds_bucket{application="$application", instance="$instance", job="app-forum-api", uri!="/actuator/prometheus"}[1m])) by (le))
+~~~~
 
 
 
@@ -262,6 +278,42 @@ Página do Grafana, mostrando a *row* API RED. Há 5 indicadores: *Total Request
 
 
 
+
+
+
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# 
+# Dia 01/04/2023
+
+- Subindo stack da aula, usando stack do Curso2:
+cd /home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+docker-compose up -d
+
+- Grafana acessível:
+http://192.168.0.110:3000
+<http://192.168.0.110:3000>
+
+- Usuário e senha
+admin
+nemsei90
+
+
+
+- Endpoint das métricas:
+http://192.168.0.110/metrics
+
+
+
+
+
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# ##############################################################################################################################################################
+# 
 # PENDENTE
 - Ver mais sobre histogram_quantile
 https://blog.cisne.dev/montando-5-graficos-com-uma-metrica-do-prometheus/
