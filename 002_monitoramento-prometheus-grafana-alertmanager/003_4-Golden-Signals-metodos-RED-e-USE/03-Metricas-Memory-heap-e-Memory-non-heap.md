@@ -156,3 +156,103 @@ jvm_memory_max_bytes
 ~~~~bash
 sum(jvm_memory_used_bytes{application="$application", instance="$instance", job="app-forum-api", area="heap"}) *100 / sum(jvm_memory_max_bytes{application="$application", instance="$instance", job="app-forum-api", area="heap"})
 ~~~~
+
+
+
+- Tipo do painel
+vamos mudar o tipo de painel
+DE:
+Time Series
+PARA:
+Gauge
+
+
+
+
+[03:21] Atualmente, estou em “2.2%. Vamos colocar o título como “HEAP USED” e a descrição será “Memória heap utilizada”.
+
+[03:42] Está bem grande esse valor, está com 72;2% e, provavelmente, eu posso estar cometendo uma pequena falha nesse cálculo. Deixa eu olhar a métrica direito.
+
+[04:15] Agora tivemos uma modificação que foi quando o próprio scrape time do Prometheus rodou, ele pegou um novo valor e a métrica andou. Em 72%, estava muito baixo, eu estava achando estranho.
+
+
+## Painel
+
+- Título:
+HEAP USED
+
+- Descrição:
+Memória heap utilizada
+
+
+
+
+
+
+[03:42] Está bem grande esse valor, está com 72;2% e, provavelmente, eu posso estar cometendo uma pequena falha nesse cálculo. Deixa eu olhar a métrica direito.
+
+[04:15] Agora tivemos uma modificação que foi quando o próprio scrape time do Prometheus rodou, ele pegou um novo valor e a métrica andou. Em 72%, estava muito baixo, eu estava achando estranho.
+
+[04:35] O valor mínimo que vamos ter é 0, o máximo é 100. Valores decimais vou deixar, não vou mexer nisso; o “Color scheme” é do “Threshold”, então vou colocar que 80% é um problema e que 100% é um problema ainda maior, então vou colocá-lo como roxo.
+
+
+- Valor mínimo, setar para zero:
+0
+
+- Máximo:
+100
+
+- Thresholds
+80 - cor vermelha
+100 - cor roxa
+
+
+
+
+
+
+
+
+[05:26] Então, já temos um painel com o uso de memória heap e agora, vou copiar essa consulta porque vamos criar um outro painel que é bem similar a esse.
+
+[05:46] Qual a diferença? Ele vai trabalhar com outra área de memória, com a alocação nonheap. Será então sum(jvm_memory_used_bytes{application=”$application”, instance=”$instance”, job=”app-forum-api”, area=”nonheap”}) *100 / sum(jvm_memory_max_bytes{application=”$application”, instance=”$instance”, job=”app-forum-api”, area=”nonheap”}). Não tem legenda, basicamente é isso mesmo que eu queria.
+
+[06:11] Aqui, vou chamar de “NON HEAP USED”. E a descrição ficará como “Memória non heap utilizada”. Vamos descer, valor de legenda não vou colocar, não tem muito o que mexer nisso, vamos tirar do “Time series” e levar para “Gauge”.
+
+[06:50] O cálculo vai em cima do último valor não nulo, está certo. Aqui está para mostrar as marcas de threshold, vou manter para ficar igual ao outro. Não coloquei unidade no outro, mas não vai fazer diferença para nós.
+
+[07:13] O valor mínimo é 0, o valor máximo é 100. Descendo, vou deixar o base em verde, meu 80 em vermelho e vou colocar basicamente uma configuração igual ao que fizemos no painel de memória heap, apesar de serem coisas bem distintas.
+
+[07:49] Eu poderia trabalhar até com o valor percentual, o que ficaria melhor. Na unidade, vou olhar como vamos ficar se trabalharmos com o percentual. Ficou interessante, o ideal é utilizarmos essa configuração de percentual de 0 a 100.
+
+
+- Adicionar novo painel.
+- Tipo:
+Gauge
+- Iremos utilizar a área nonheap agora:
+
+- QUERY EDITADA:
+
+~~~~bash
+sum(jvm_memory_used_bytes{application="$application", instance="$instance", job="app-forum-api", area="nonheap"}) *100 / sum(jvm_memory_max_bytes{application="$application", instance="$instance", job="app-forum-api", area="nonheap"})
+~~~~
+
+
+- Título:
+NON HEAP USED
+
+- Descrição:
+Memória non heap utilizada
+
+- Valor mínimo, setar para zero:
+0
+
+- Máximo:
+100
+
+- Thresholds
+80 - cor vermelha
+100 - cor roxa
+
+- Unit:
+Percent (0-100)
