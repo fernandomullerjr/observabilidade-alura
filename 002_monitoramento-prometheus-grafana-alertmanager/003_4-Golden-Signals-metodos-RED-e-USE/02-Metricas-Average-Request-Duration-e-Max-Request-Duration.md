@@ -417,3 +417,8 @@ http_server_requests_seconds_max{application="$application", instance="$instance
 [12:18] Se fossemos olhar para a parte de rede e para a parte de disco, teríamos que estar olhando para um escopo maior, teríamos que estar acima do nível do contêiner.
 
 [12:28] Ainda vamos ter uma abordagem que vai ser sobre CPU e sobre memória. Fazemos isso na próxima aula. Por hoje, paramos por aqui. Te vejo na próxima aula.
+
+
+
+# PENDENTE
+- Aprofundar sobre RED e USE
