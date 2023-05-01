@@ -1,0 +1,17 @@
+{
+	"ulid": "01GZCK4XBYX1Y5S34RFMTMPV2P",
+	"minTime": 1682900257046,
+	"maxTime": 1682906400000,
+	"stats": {
+		"numSamples": 327552,
+		"numSeries": 691,
+		"numChunks": 2901
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01GZCK4XBYX1Y5S34RFMTMPV2P"
+		]
+	},
+	"version": 1
+}
