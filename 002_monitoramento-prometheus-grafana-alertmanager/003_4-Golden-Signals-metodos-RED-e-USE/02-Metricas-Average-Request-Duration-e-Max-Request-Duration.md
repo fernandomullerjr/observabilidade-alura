@@ -124,6 +124,7 @@ rate(http_server_requests_seconds_sum{application="$application", instance="$ins
 
 
 
+## Query A
 - QUERY EDITADA:
 
 ~~~~bash
@@ -187,15 +188,19 @@ rate(http_server_requests_seconds_sum{application="$application", instance="$ins
 bad_data: 1:280: parse error: unexpected identifier "status" in label matching, expected "," or "}": details: 
 
 
+## Query B
 - QUERY EDITADA, v3:
 
 tirando acento da palavra topicos
 adicionada virgula antes do status na segunda linha
+ADICIONADA barra apos topicos
 
 ~~~~bash
-rate(http_server_requests_seconds_sum{application="$application", instance="$instance", job="app-forum-api", status="200", uri="/topicos{id}"}[1m]) / rate(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", status="200", uri="/topicos/{id}"}[1m])
+rate(http_server_requests_seconds_sum{application="$application", instance="$instance", job="app-forum-api", status="200", uri="/topicos/{id}"}[1m]) / rate(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", status="200", uri="/topicos/{id}"}[1m])
 ~~~~
 
+- Legenda:
+{{uri}} {{method}} {{status}}
 
 - Ficou ok agora!
 
@@ -211,3 +216,17 @@ rate(http_server_requests_seconds_sum{application="$application", instance="$ins
 
 # PENDENTE
 - Seguir em 03:35 de video da aula.
+
+
+## Query C
+
+Endpoint de autenticação, auth
+
+- QUERY EDITADA:
+
+~~~~bash
+rate(http_server_requests_seconds_sum{application="$application", instance="$instance", job="app-forum-api", status="200", uri="/auth"}[1m]) / rate(http_server_requests_seconds_count{application="$application", instance="$instance", job="app-forum-api", status="200", uri="/auth"}[1m])
+~~~~
+
+- Legenda:
+{{uri}} {{method}} {{status}}

@@ -5,6 +5,12 @@ cd /home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertman
 docker-compose up -d
 
 
+### Desligando stack - Curso2
+
+cd /home/fernando/cursos/sre-alura/002_monitoramento-prometheus-grafana-alertmanager/materiais_aulas/aula_01/conteudo_01
+docker-compose down
+
+
 ### Grafana
 
 - Grafana acessível:

@@ -1,0 +1,17 @@
+{
+	"ulid": "01GZA82Q8CAMHD1X98GKTGH188",
+	"minTime": 1682813773673,
+	"maxTime": 1682820000000,
+	"stats": {
+		"numSamples": 263917,
+		"numSeries": 688,
+		"numChunks": 2210
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01GZA82Q8CAMHD1X98GKTGH188"
+		]
+	},
+	"version": 1
+}
