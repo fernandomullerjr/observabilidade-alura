@@ -230,3 +230,87 @@ rate(http_server_requests_seconds_sum{application="$application", instance="$ins
 
 - Legenda:
 {{uri}} {{method}} {{status}}
+
+
+
+
+
+
+
+
+[04:07] O título vou colocar como “AVERAGE REQUEST DURATION", vou colocar a descrição como “Duração média de requisições no último minuto". Vamos trabalhar na legenda, vai ser uma legenda em formato de tabela.
+
+[04:44] Em valores, vou colocar o mínimo, o máximo, o valor médio e o último coletado. Está quase concluído, vou colocar a opacidade 10, vou trabalhar com gradiente, tirar a pontuação.
+
+[05:20] Em unidade, novamente vamos trabalhar com “Time > Seconds". Está construído o nosso painel. Vou descer esse painel para cá e vou colocá-lo do lado do contador de requisições, do nosso “Request Count".
+
+Gráfico *Average Request Duration*. O eixo x mostra a passagem do tempo, de 1 em 1 minuto. O eixo y mostra os valores 0s, 50ms e 100ms. A linha azul (que representa /auth) se mantém estável ligeiramente abaixo de 100ms. As linhas amarela e verde  (/topicos/{id} e /topicos, respectivamente) se mantém estáveis ligeiramente acima de 0s.
+
+- Titulo do painel
+AVERAGE REQUEST DURATION
+
+- Descrição como:
+Duração média de requisições no último minuto
+
+- Legenda, alterar para o tipo:
+Table
+
+- Legend values:
+Min
+Max
+Mean
+Last *
+
+- Fill opacity
+10
+
+- Gradient mode
+Opacity
+
+- Show points
+Never
+
+- Standard options / Unit
+Time / seconds(s)
+
+
+
+
+- Ajustado o posicionamento do painel "AVERAGE REQUEST DURATION", deixando ao lado do "REQUEST COUNT".
+
+
+
+
+# SEGUNDO PAINEL
+
+- Adicionar um segundo painel
+
+
+
+[05:54] Agora vamos partir para o nosso último painel. Vamos em “Adicionar painel" e, nesse caso, vamos estar lidando com a duração máxima de uma requisição. Então, a métrica é o http_server_requests_seconds_max.
+
+[06:19] Vou colocar os nosso labels application="$application", instance="$instance", job="app-forum-api". O que mais vamos colocar aqui? Cada um dos endpoints que vamos olhar.
+
+[06:55] Vai ficar uma métrica muito similar ao que trabalhamos anteriormente, tem o status="200" – eu poderia não trabalhar com o status para termos um volume maior de informação, mas, nesse caso, o nosso foco é naquilo que está realmente sendo respondido para o cliente com sucesso.
+
+[07:20] Vou trabalhar com uma uri="/topicos". Nesse caso, o que podemos fazer é colocar um time range específico, vou colocar [1m], e podemos trabalhar especificamente com a taxa de crescimento que tivemos no último minuto, increase.
+
+
+- Nesta query vamos utilizar a métrica que traz a  duração máxima de uma requisição:
+http_server_requests_seconds_max
+
+- QUERY EDITADA:
+
+~~~~bash
+http_server_requests_seconds_max{application="$application", instance="$instance", job="app-forum-api", status="200", uri="/topicos"}
+~~~~
+
+
+- Editando novamente, não vamos especificar o endpoint topicos, pois queremos esta métrica para todos os Endpoints:
+
+~~~~bash
+http_server_requests_seconds_max{application="$application", instance="$instance", job="app-forum-api", status="200"}
+~~~~
+
+
+http_server_requests_seconds_max{application="$application", instance="$instance", job="app-forum-api", status="200"}
