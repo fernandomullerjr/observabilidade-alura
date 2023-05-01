@@ -313,4 +313,107 @@ http_server_requests_seconds_max{application="$application", instance="$instance
 ~~~~
 
 
-http_server_requests_seconds_max{application="$application", instance="$instance", job="app-forum-api", status="200"}
+- Legenda:
+{{uri}} {{method}} {{status}}
+
+
+
+
+[09:16] Na legenda, podemos colocar a {{uri}} {{method}} {{status}}. Vou colocar como título “MAX REQUEST DURATION", e a descrição será “Duração máxima de uma requisição".
+
+[10:00] A legenda vou colocar também como tabela, e nos valores, vamos colocar o mínimo, o máximo, a média e o último valor não nulo.
+
+[10:25] Vou fazer a mesma configuração de sempre, opaco com gradiente, sem os pontos, não vou mexer nos eixos X ou Y. Na unidade, vou pôr “Tempo" e vou "setar" “Segundos".
+
+[10:49] Basicamente, é isso. O “Max Request Duration" está feito, vou trazê-lo para cá e adequar o tamanho.
+
+
+- Título:
+MAX REQUEST DURATION
+
+- Descrição:
+Duração máxima de uma requisição
+
+- Legend mode:
+Table
+
+- Legend values
+Min
+Max
+Mean
+Last *
+
+- Fill opacity
+10
+
+- Gradient mode
+Opacity
+
+- Show points
+Never
+
+- Standard options / Unit
+Time / seconds(s)
+
+
+
+- Ajustado o posicionamento.
+
+- Verificado que o painel está trazendo métricas do Actuator.
+/actuator/health GET 200
+	3.39 ms	1.19 s	72.5 ms	7.47 ms
+/actuator/prometheus GET 200
+	7.45 ms	51.5 ms	14.6 ms	9.91 ms
+
+
+
+- Temos que ajustar a Query, para negar este path.
+
+
+
+[11:14] Ficou pequeno porque ele está pegando o /actuator/prometheus, então vamos voltar e fazer uma pequena correção. Vou fazer um seletor de negação, uri!="/actuator/prometheus".
+
+[11:39] Nesse caso, precisamos disso porque no “Average request duration" estamos especificando os endpoints e aqui não, então o /actuator/prometheus acabava entrando no meio dessa seara.
+
+
+- Query editada:
+
+~~~~bash
+http_server_requests_seconds_max{application="$application", instance="$instance", job="app-forum-api", status="200", uri!="/actuator/prometheus"}
+~~~~
+
+- Na Query acima, só pegava os Actuator com path Prometheus
+
+
+- Necessário utilizar wildcard com REGEX no Prometheus, para filtrar todos que tem /actuator
+
+- Exemplo de REGEX:
+topic!~".+confluent.+"
+
+- REGEX editado:
+uri!~"/actuator.+"
+
+- Query editada:
+
+~~~~bash
+http_server_requests_seconds_max{application="$application", instance="$instance", job="app-forum-api", status="200", uri!~"/actuator.+"}
+~~~~
+
+- Trouxe apenas os paths desejados:
+
+/topicos GET 200
+	2.86 ms	1.89 s	33.1 ms	4.09 ms
+/topicos/{id} GET 200
+	7.75 ms	47.4 ms	19.8 ms	27.4 ms
+/auth POST 200
+	112 ms	395 ms	185 ms	202 ms
+
+
+
+
+
+[11:57] Concluímos a parte RED da nossa API. Ainda vamos ter uma abordagem ao método USE, mas bem reduzida. Só vamos olhar para CPU e memória, uma vez que estamos lidando com uma aplicação conteinerizada.
+
+[12:18] Se fossemos olhar para a parte de rede e para a parte de disco, teríamos que estar olhando para um escopo maior, teríamos que estar acima do nível do contêiner.
+
+[12:28] Ainda vamos ter uma abordagem que vai ser sobre CPU e sobre memória. Fazemos isso na próxima aula. Por hoje, paramos por aqui. Te vejo na próxima aula.
